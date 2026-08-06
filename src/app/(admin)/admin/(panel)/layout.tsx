@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { signOut } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { auth, signOut } from "@/lib/auth";
 import {
   Calendar,
   Heart,
@@ -20,11 +21,22 @@ const navItems = [
   { href: "/admin/dons", label: "Dons", icon: Heart },
 ];
 
-export default function AdminPanelLayout({
+export default async function AdminPanelLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
+  const role = (session?.user as { role?: string } | undefined)?.role;
+
+  if (!session) {
+    redirect("/admin/login");
+  }
+
+  if (role !== "ADMIN") {
+    redirect("/");
+  }
+
   return (
     <div className="flex min-h-screen">
       <aside className="hidden w-64 flex-col border-r border-border bg-foreground text-white lg:flex">
