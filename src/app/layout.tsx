@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Syne } from "next/font/google";
+import { Providers } from "@/components/providers/Providers";
 import "./globals.css";
 
 const syne = Syne({
@@ -46,7 +47,7 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${syne.variable} ${plusJakarta.variable} h-full`}>
       <body className="flex min-h-full flex-col bg-background text-foreground antialiased">
-        {children}
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
