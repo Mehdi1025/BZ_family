@@ -1,41 +1,31 @@
 import type { Metadata } from "next";
-import { SectionHeading } from "@/components/shared/SectionHeading";
-import { MediaImage } from "@/components/shared/MediaImage";
-import { siteImages } from "@/lib/data/images";
+import { SectionIntro } from "@/components/shared/FadeUp";
+import { GalleryClient } from "./GalleryClient";
 
 export const metadata: Metadata = {
   title: "Galerie",
-  description: "Photos et vidéos des événements et actions de BZ Family.",
+  description:
+    "Revivez les moments forts de BZ Family : événements, actions solidaires, bénévoles et vie de quartier.",
 };
 
 export default function GalleryPage() {
   return (
     <>
-      <section className="bg-surface-muted section-padding">
-        <div className="container-bz">
-          <SectionHeading
-            eyebrow="Médias"
+      <section className="relative overflow-hidden bg-encre text-white">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_20%,rgba(59,130,246,0.32),transparent_35%),radial-gradient(circle_at_85%_30%,rgba(217,119,6,0.22),transparent_30%)]" />
+        <div className="container-bz relative py-28 lg:py-36">
+          <SectionIntro
+            label="Médias"
             title="Galerie"
-            description="Revivez nos moments forts en images."
+            description="Revivez nos moments forts : les actions de terrain, les bénévoles, les événements et les rencontres qui font vivre BZ Family."
+            theme="dark"
           />
         </div>
       </section>
 
-      <section className="section-padding">
-        <div className="container-bz grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {siteImages.gallery.map((item) => (
-            <div key={item.id} className="group relative">
-              <MediaImage
-                src={item.src}
-                alt={item.title}
-                containerClassName="aspect-square rounded-xl"
-              />
-              <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-end rounded-xl bg-gradient-to-t from-black/70 to-transparent p-6 opacity-0 transition-opacity group-hover:opacity-100">
-                <p className="font-semibold text-white">{item.title}</p>
-                <p className="text-sm text-white/80">{item.category}</p>
-              </div>
-            </div>
-          ))}
+      <section className="section-padding bg-papier">
+        <div className="container-bz">
+          <GalleryClient />
         </div>
       </section>
     </>
