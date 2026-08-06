@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+export const dynamic = "force-dynamic";
+
 const navItems = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/evenements", label: "Événements", icon: Calendar },
