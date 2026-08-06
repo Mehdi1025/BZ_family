@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BZ Family — Association à but non lucratif
 
-## Getting Started
+Site web de l'association **BZ Family** : solidarité, bénévolat, événements et dons.
 
-First, run the development server:
+## Stack technique
+
+- **Next.js 16** (App Router, RSC)
+- **TypeScript** strict
+- **Tailwind CSS v4** + Shadcn UI
+- **Prisma** + PostgreSQL (Supabase)
+- **NextAuth.js** (Auth.js)
+- **Stripe** (dons)
+- **Resend** (emails transactionnels)
+- **React Hook Form** + **Zod**
+
+## Démarrage rapide
 
 ```bash
+# 1. Installer les dépendances
+npm install
+
+# 2. Configurer l'environnement
+cp .env.example .env
+# Remplir DATABASE_URL, AUTH_SECRET, STRIPE_*, RESEND_*
+
+# 3. Pousser le schéma Prisma
+npm run db:push
+
+# 4. Seed admin (optionnel)
+npm run db:seed
+
+# 5. Lancer le dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrir [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Admin
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- URL : `/admin/login`
+- Compte seed : `admin@bzfamily.org` / `admin123`
 
-## Learn More
+## Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+├── app/
+│   ├── (public)/       # Pages publiques
+│   ├── (admin)/        # Back-office
+│   └── api/            # Routes API (Stripe, inscriptions, bénévoles)
+├── components/
+│   ├── ui/             # Composants Shadcn
+│   ├── layout/         # Header, Footer
+│   ├── home/           # Sections page d'accueil
+│   └── forms/          # Formulaires validés Zod
+└── lib/                # Prisma, Stripe, Resend, Auth, Utils
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Charte graphique
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Token | Valeur |
+|-------|--------|
+| Primary | `#1E40AF` |
+| Accent | `#F59E0B` |
+| Accent warm | `#EA580C` |
+| Background | `#FFFFFF` |
+| Surface muted | `#F9FAFB` |
+| Texte | `#111827` |

@@ -1,0 +1,156 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+enum RegistrationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+enum VolunteerStatus {
+  PENDING
+  REVIEWED
+  ACCEPTED
+  REJECTED
+}
+
+enum DonationStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+enum PartnerType {
+  INSTITUTIONAL
+  CORPORATE
+  COMMUNITY
+  MEDIA
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  role         Role     @default(USER)
+  passwordHash String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Action {
+  id        String   @id @default(cuid())
+  title     String
+  slug      String   @unique
+  summary   String
+  content   String   @db.Text
+  category  String
+  imageUrl  String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Event {
+  id               String         @id @default(cuid())
+  title            String
+  slug             String         @unique
+  description      String         @db.Text
+  date             DateTime
+  time             String
+  location         String
+  capacity         Int
+  registeredCount  Int            @default(0)
+  imageUrl         String?
+  registrations    Registration[]
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+}
+
+model Registration {
+  id        String             @id @default(cuid())
+  eventId   String
+  event     Event              @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  firstName String
+  lastName  String
+  email     String
+  phone     String
+  status    RegistrationStatus @default(PENDING)
+  createdAt DateTime           @default(now())
+}
+
+model Article {
+  id          String    @id @default(cuid())
+  title       String
+  slug        String    @unique
+  content     String    @db.Text
+  excerpt     String
+  category    String
+  imageUrl    String?
+  seoTitle    String?
+  seoDesc     String?
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model VolunteerApplication {
+  id           String          @id @default(cuid())
+  firstName    String
+  lastName     String
+  email        String
+  phone        String
+  availability String
+  skills       String          @db.Text
+  motivation   String          @db.Text
+  status       VolunteerStatus @default(PENDING)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+}
+
+model Donation {
+  id              String         @id @default(cuid())
+  stripePaymentId String?        @unique
+  amount          Int
+  donorEmail      String
+  donorName       String?
+  status          DonationStatus @default(PENDING)
+  createdAt       DateTime       @default(now())
+}
+
+model Partner {
+  id          String      @id @default(cuid())
+  name        String
+  logoUrl     String?
+  description String?
+  websiteUrl  String?
+  type        PartnerType @default(COMMUNITY)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model GalleryMedia {
+  id         String    @id @default(cuid())
+  albumTitle String
+  mediaUrl   String
+  type       MediaType @default(IMAGE)
+  category   String
+  createdAt  DateTime  @default(now())
+}
