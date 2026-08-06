@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Logo } from "@/components/shared/Logo";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -35,7 +36,8 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-surface-muted p-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-surface-muted p-4">
+      <Logo size="lg" className="mb-8" />
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Administration BZ Family</CardTitle>

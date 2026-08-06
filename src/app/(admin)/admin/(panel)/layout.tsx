@@ -10,6 +10,7 @@ import {
   Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/shared/Logo";
 
 export const dynamic = "force-dynamic";
 
@@ -41,8 +42,9 @@ export default async function AdminPanelLayout({
     <div className="flex min-h-screen">
       <aside className="hidden w-64 flex-col border-r border-border bg-foreground text-white lg:flex">
         <div className="border-b border-white/10 p-6">
-          <Link href="/admin/dashboard" className="text-xl font-bold">
-            BZ Admin
+          <Link href="/admin/dashboard" className="flex items-center gap-3">
+            <Logo variant="light" size="sm" />
+            <span className="text-xl font-bold">Admin</span>
           </Link>
         </div>
         <nav className="flex-1 space-y-1 p-4">

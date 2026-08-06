@@ -7,6 +7,7 @@ import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { navLinks } from "@/lib/data/mock";
+import { Logo } from "@/components/shared/Logo";
 import { cn } from "@/lib/utils";
 
 export function Header() {
@@ -47,36 +48,12 @@ export function Header() {
       )}
     >
       <div className="container-bz flex h-16 items-center justify-between gap-6 lg:h-[72px]">
-        <Link href="/" className="group flex items-center gap-3">
-          <span
-            className={cn(
-              "flex h-10 w-10 items-center justify-center rounded-lg font-display text-sm font-extrabold transition-colors",
-              transparent
-                ? "bg-white text-[#0a0a0f]"
-                : "bg-primary text-white group-hover:bg-primary/90"
-            )}
-          >
-            BZ
-          </span>
-          <span className="flex flex-col leading-none">
-            <span
-              className={cn(
-                "font-display text-lg font-bold",
-                light ? "text-encre" : "text-white"
-              )}
-            >
-              BZ Family
-            </span>
-            <span
-              className={cn(
-                "mt-0.5 text-[10px] font-medium uppercase tracking-wider",
-                light ? "text-muted-foreground" : "text-white/50"
-              )}
-            >
-              Association de quartier
-            </span>
-          </span>
-        </Link>
+        <Logo
+          href="/"
+          variant={light ? "dark" : "light"}
+          size="sm"
+          showWordmark
+        />
 
         <nav className="hidden items-center gap-1 xl:flex">
           {navLinks.map((link) => {

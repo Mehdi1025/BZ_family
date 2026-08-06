@@ -34,6 +34,10 @@ export const metadata: Metadata = {
     description:
       "Ensemble, créons un impact positif dans notre quartier.",
   },
+  icons: {
+    icon: "/images/favicon.png",
+    apple: "/images/logo-192.png",
+  },
 };
 
 export default function RootLayout({

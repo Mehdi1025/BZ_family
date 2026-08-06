@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Facebook, Instagram, Linkedin, Mail, MapPin, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Logo } from "@/components/shared/Logo";
 import { siteConfig } from "@/lib/utils";
 
 const footerLinks = {
@@ -36,12 +37,7 @@ export function Footer() {
       <div className="container-bz py-16 lg:py-20">
         <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-4">
-            <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary font-display text-sm font-extrabold">
-                BZ
-              </span>
-              <span className="font-display text-lg font-bold">BZ Family</span>
-            </div>
+            <Logo href="/" variant="light" size="sm" showWordmark />
             <p className="mt-5 max-w-xs text-pretty text-sm leading-relaxed text-white/70">
               Association loi 1901 dédiée à la solidarité de proximité et au lien
               social dans le quartier. Créée en 2019 par des habitants.
