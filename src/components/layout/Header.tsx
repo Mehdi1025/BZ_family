@@ -115,7 +115,7 @@ export function Header() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-x-0 top-16 bottom-0 z-40 overflow-y-auto border-t border-line bg-white xl:hidden"
+            className="fixed inset-x-0 top-16 z-[100] max-h-[calc(100dvh-4rem)] overflow-y-auto border-t border-line bg-white shadow-2xl xl:hidden"
           >
             <nav className="container-bz flex flex-col py-4">
               {navLinks.map((link) => (

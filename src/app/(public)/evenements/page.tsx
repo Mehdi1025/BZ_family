@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import type { Event } from "@prisma/client";
 import { ArrowUpRight, Calendar, Clock, MapPin, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { FadeUp, SectionIntro } from "@/components/shared/FadeUp";
 import { MediaImage } from "@/components/shared/MediaImage";
-import { upcomingEvents } from "@/lib/data/mock";
+import prisma from "@/lib/prisma";
+import { getEventImage } from "@/lib/data/images";
 import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -13,11 +15,13 @@ export const metadata: Metadata = {
     "Découvrez et inscrivez-vous aux prochains événements de BZ Family.",
 };
 
-function getEventGroups() {
+export const dynamic = "force-dynamic";
+
+function getEventGroups(events: Event[]) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const sortedEvents = [...upcomingEvents].sort(
+  const sortedEvents = [...events].sort(
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
 
@@ -33,10 +37,11 @@ function EventCard({
   event,
   index,
 }: {
-  event: (typeof upcomingEvents)[number];
+  event: Event;
   index: number;
 }) {
   const spotsLeft = event.capacity - event.registeredCount;
+  const imageUrl = event.imageUrl ?? getEventImage(event.slug);
 
   return (
     <FadeUp delay={index * 0.08}>
@@ -44,7 +49,7 @@ function EventCard({
         <Link href={`/evenements/${event.slug}`} className="block h-full">
           <div className="relative">
             <MediaImage
-              src={event.imageUrl}
+              src={imageUrl}
               alt={event.title}
               containerClassName="aspect-[16/10]"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 420px"
@@ -97,8 +102,14 @@ function EventCard({
   );
 }
 
-export default function EventsPage() {
-  const { upcoming, past } = getEventGroups();
+export default async function EventsPage() {
+  const events = await prisma.event.findMany({
+    orderBy: {
+      date: "asc",
+    },
+  });
+
+  const { upcoming, past } = getEventGroups(events);
 
   return (
     <>
