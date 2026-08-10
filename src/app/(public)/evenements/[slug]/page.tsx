@@ -75,6 +75,106 @@ const eventEditorialDetails: Record<
       },
     ],
   },
+  "marche-solidaire": {
+    longDescription: [
+      "La marche solidaire réunit les habitants, les bénévoles et les familles autour d'un parcours accessible, pensé pour encourager la participation de tous. L'objectif est de créer un moment collectif simple, chaleureux et utile pour soutenir les actions locales de BZ Family.",
+      "Au fil du parcours, les participants découvrent les initiatives portées par l'association et peuvent échanger avec les bénévoles présents. Cette rencontre permet de mieux comprendre les besoins du quartier et de valoriser l'engagement de chacun.",
+      "Plus qu'une activité sportive, cette marche est un temps de mobilisation citoyenne. Elle permet de renforcer les liens entre les participants, de rendre visibles les projets solidaires et de soutenir concrètement les prochaines actions de terrain.",
+    ],
+    schedule: [
+      {
+        time: "09:00",
+        title: "Accueil et émargement",
+        description:
+          "Accueil des participants, vérification des inscriptions et présentation du parcours.",
+      },
+      {
+        time: "09:30",
+        title: "Départ de la marche",
+        description:
+          "Départ groupé avec encadrement par les bénévoles de l'association.",
+      },
+      {
+        time: "10:30",
+        title: "Pause solidaire",
+        description:
+          "Temps d'échange autour des actions de BZ Family et point d'eau pour les participants.",
+      },
+      {
+        time: "11:30",
+        title: "Arrivée et moment convivial",
+        description:
+          "Retour au point de départ, remerciements et échanges avec les bénévoles.",
+      },
+    ],
+    practicalInfo: [
+      {
+        title: "Accessibilité",
+        description:
+          "Le parcours est prévu pour rester accessible au plus grand nombre. Les participants peuvent signaler leurs besoins particuliers avant l'événement.",
+      },
+      {
+        title: "Transport",
+        description:
+          "Le départ se fait depuis un lieu facilement accessible en transports en commun, avec des possibilités de stationnement à proximité.",
+      },
+      {
+        title: "Contact",
+        description:
+          "Pour toute question sur le parcours ou l'inscription, les participants peuvent contacter l'association via la page contact.",
+      },
+    ],
+  },
+  "forum-benevoles": {
+    longDescription: [
+      "Le forum bénévoles est un temps de rencontre destiné aux personnes qui souhaitent découvrir les missions de BZ Family et s'engager dans la vie associative. Il permet de présenter les actions en cours, les besoins du terrain et les différentes façons de participer selon les disponibilités de chacun.",
+      "Les visiteurs peuvent échanger directement avec les membres de l'association, poser leurs questions et mieux comprendre le rôle des bénévoles dans l'organisation des événements, l'accompagnement des familles et la gestion des actions solidaires.",
+      "Cette rencontre aide aussi l'association à construire une équipe plus structurée et plus réactive. Elle favorise l'accueil de nouveaux profils, la répartition des missions et la création d'un engagement durable autour des projets du quartier.",
+    ],
+    schedule: [
+      {
+        time: "10:00",
+        title: "Accueil des visiteurs",
+        description:
+          "Présentation de l'association, des bénévoles présents et des objectifs du forum.",
+      },
+      {
+        time: "10:30",
+        title: "Présentation des missions",
+        description:
+          "Découverte des besoins de l'association : événements, logistique, communication et accompagnement.",
+      },
+      {
+        time: "11:30",
+        title: "Échanges par pôles",
+        description:
+          "Discussion avec les référents pour identifier les missions adaptées aux disponibilités de chacun.",
+      },
+      {
+        time: "12:30",
+        title: "Inscriptions bénévoles",
+        description:
+          "Recueil des candidatures et explication des prochaines étapes d'intégration.",
+      },
+    ],
+    practicalInfo: [
+      {
+        title: "Accessibilité",
+        description:
+          "Le forum est organisé dans un espace accessible. Les personnes ayant des besoins spécifiques peuvent contacter l'association avant leur venue.",
+      },
+      {
+        title: "Transport",
+        description:
+          "Le lieu est desservi par les transports en commun et reste facilement accessible depuis les principaux points du quartier.",
+      },
+      {
+        title: "Contact",
+        description:
+          "Les personnes intéressées peuvent venir librement ou contacter l'association via la page contact pour préparer leur participation.",
+      },
+    ],
+  },
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -121,6 +221,7 @@ export default async function EventDetailPage({ params }: Props) {
 
   const spotsLeft = event.capacity - event.registeredCount;
   const isFull = spotsLeft <= 0;
+  const isPast = event.date < new Date();
   const imageUrl = event.imageUrl ?? getEventImage(slug);
   const editorialDetails = eventEditorialDetails[event.slug];
   const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(siteConfig.address)}&output=embed`;
@@ -273,10 +374,12 @@ export default async function EventDetailPage({ params }: Props) {
                       Participation
                     </p>
                     <CardTitle className="mt-2 text-2xl">
-                      Réserver sa place
+                      {isPast ? "Inscriptions fermées" : "Réserver sa place"}
                     </CardTitle>
                   </div>
-                  {isFull ? (
+                  {isPast ? (
+                    <Badge variant="secondary">Passé</Badge>
+                  ) : isFull ? (
                     <Badge variant="secondary">Complet</Badge>
                   ) : (
                     <Badge variant="accent">{spotsLeft} places</Badge>
@@ -303,7 +406,11 @@ export default async function EventDetailPage({ params }: Props) {
                   </div>
                 </div>
 
-                {isFull ? (
+                {isPast ? (
+                  <p className="rounded-2xl border border-line bg-papier p-4 text-sm leading-6 text-muted-foreground">
+                    Les inscriptions sont fermées pour cet événement passé.
+                  </p>
+                ) : isFull ? (
                   <p className="rounded-2xl border border-line bg-papier p-4 text-sm leading-6 text-muted-foreground">
                     Cet événement est complet. Contactez-nous pour la liste
                     d&apos;attente.
