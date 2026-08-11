@@ -82,6 +82,32 @@ body::after {
   }
 }
 
+@layer components {
+  .prose {
+    @apply text-foreground-muted;
+  }
+
+  .prose-lg {
+    @apply text-lg leading-8;
+  }
+
+  .prose p {
+    @apply mt-6;
+  }
+
+  .prose .lead {
+    @apply mt-0 border-l-4 border-primary/40 pl-5 text-xl font-medium leading-9 text-encre;
+  }
+
+  .prose a {
+    @apply font-semibold text-primary underline-offset-4 hover:underline;
+  }
+
+  .prose strong {
+    @apply font-semibold text-encre;
+  }
+}
+
 @keyframes marquee {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
