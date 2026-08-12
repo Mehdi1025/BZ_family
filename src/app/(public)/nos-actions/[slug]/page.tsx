@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, Quote } from "lucide-react";
@@ -144,3 +144,4 @@ export default async function ActionDetailPage({ params }: PageProps) {
     </>
   );
 }
+

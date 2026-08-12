@@ -142,7 +142,7 @@ export function Footer() {
 
         <div className="mt-14 flex flex-col items-start justify-between gap-4 border-t border-white/10 pt-7 sm:flex-row sm:items-center">
           <p className="text-xs text-white/50">
-            © {new Date().getFullYear()} BZ Family — Association loi 1901.
+            © {new Date().getFullYear()} BZ Family - Association loi 1901.
           </p>
           <div className="flex flex-wrap gap-6">
             {footerLinks.legal.map((link) => (

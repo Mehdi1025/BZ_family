@@ -1,6 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, HeartHandshake, HandHeart, MapPinned, ShieldCheck, UserRound, UsersRound } from "lucide-react";
+import {
+  ArrowRight,
+  HandHeart,
+  HeartHandshake,
+  MapPinned,
+  ShieldCheck,
+  UserRound,
+  UsersRound,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FadeUp, SectionIntro } from "@/components/shared/FadeUp";
 import { MediaImage } from "@/components/shared/MediaImage";

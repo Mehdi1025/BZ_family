@@ -57,7 +57,7 @@ export default function PrivacyPolicyPage() {
       <section className="section-padding bg-white">
         <div className="container-bz max-w-4xl">
           <p className="mb-10 rounded-2xl bg-papier p-6 text-sm leading-relaxed text-muted-foreground">
-            Dernière mise à jour : 7 août 2026. Cette politique pourra être mise
+            Dernière mise à jour : 12 août 2026. Cette politique pourra être mise
             à jour si les outils ou les traitements de l&apos;association évoluent.
           </p>
 

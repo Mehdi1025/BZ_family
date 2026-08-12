@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { ScrollProgress } from "@/components/shared/ScrollProgress";
 import { Hero } from "@/components/home/Hero";
 import { Manifesto } from "@/components/home/Manifesto";
@@ -39,3 +39,4 @@ export default function HomePage() {
     </>
   );
 }
+

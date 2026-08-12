@@ -32,7 +32,7 @@ export function slugify(text: string): string {
 export const siteConfig = {
   name: "BZ Family",
   description:
-    "Association à but non lucratif — Ensemble, créons un impact positif dans notre quartier.",
+    "Association à but non lucratif - Ensemble, créons un impact positif dans notre quartier.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   email: "contact@bzfamily.org",
   phone: "+33 1 23 45 67 89",
