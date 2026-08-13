@@ -1,4 +1,4 @@
-/** Images locales — téléchargées depuis Unsplash (placeholders temporaires) */
+﻿/** Images locales — téléchargées depuis Unsplash (placeholders temporaires) */
 export const siteImages = {
   hero: "/images/hero.jpg",
   about: "/images/about.jpg",

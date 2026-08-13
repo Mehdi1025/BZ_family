@@ -1,6 +1,4 @@
-import { siteImages } from "@/lib/data/images";
-
-export const aboutTimeline = [
+﻿export const aboutTimeline = [
   {
     year: "2019",
     title: "Naissance du collectif",
@@ -41,6 +39,8 @@ export const aboutValues = [
     text: "Expliquer clairement nos actions, nos besoins et l'utilisation des dons reçus.",
   },
 ];
+
+import { siteImages } from "@/lib/data/images";
 
 export const actionDetails = [
   {

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { SectionIntro } from "@/components/shared/FadeUp";
 import { GalleryClient } from "./GalleryClient";
 

@@ -167,8 +167,7 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
                 Aucun article dans cette catégorie.
               </p>
               <p className="mt-3 text-muted-foreground">
-                Revenez bientôt pour découvrir les prochaines nouvelles du
-                terrain.
+                Revenez bientôt pour découvrir les prochaines nouvelles du terrain.
               </p>
               <Button className="mt-6" asChild>
                 <Link href="/actualites">Voir toutes les actualités</Link>

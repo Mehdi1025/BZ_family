@@ -22,36 +22,36 @@ type ArticleDetail = {
 
 const articleDetails: Record<string, ArticleDetail> = {
   "collecte-alimentaire-printemps": {
-    author: "Equipe BZ Family",
+    author: "Équipe BZ Family",
     readingTime: "4 min",
     body: [
-      "La grande collecte alimentaire de printemps a mobilise les habitants, les benevoles et plusieurs partenaires locaux autour d'un objectif simple : renforcer les stocks de produits essentiels pour les familles accompagnees par l'association. Pendant plusieurs jours, chacun a pu contribuer selon ses moyens en deposant des denrees non perissables, des produits d'hygiene ou des articles de premiere necessite.",
-      "Cette operation a permis de collecter plus de deux tonnes de produits. Au-dela du volume recolte, l'action a surtout montre la capacite du quartier a se mobiliser rapidement lorsqu'un besoin concret est identifie. Les dons ont ensuite ete tries, ranges et prepares par les benevoles afin d'etre redistribues dans de bonnes conditions.",
-      "L'organisation d'une telle collecte demande une preparation importante. Il faut informer les habitants, coordonner les points de depot, verifier les dates de consommation, separer les produits par categorie et preparer les paniers destines aux familles. Chaque etape repose sur une logistique precise et sur l'engagement regulier des personnes impliquees.",
-      "Pour BZ Family, cette collecte n'est pas seulement une reponse ponctuelle a une urgence sociale. Elle s'inscrit dans une demarche plus large de solidarite de proximite, ou les habitants deviennent eux-memes acteurs de l'entraide locale. Cette dynamique renforce la confiance entre les familles, les benevoles et les structures partenaires.",
-      "Les produits recoltes permettront d'assurer plusieurs distributions dans les semaines a venir. L'association souhaite continuer a developper ce type d'initiative afin de maintenir un soutien regulier, tout en sensibilisant le public aux besoins reels presents dans le quartier.",
+      "La grande collecte alimentaire de printemps a mobilisé les habitants, les bénévoles et plusieurs partenaires locaux autour d'un objectif simple : renforcer les stocks de produits essentiels pour les familles accompagnées par l'association. Pendant plusieurs jours, chacun a pu contribuer selon ses moyens en déposant des denrées non périssables, des produits d'hygiène ou des articles de première nécessité.",
+      "Cette opération a permis de collecter plus de deux tonnes de produits. Au-delà du volume récolté, l'action a surtout montré la capacité du quartier à se mobiliser rapidement lorsqu'un besoin concret est identifié. Les dons ont ensuite été triés, rangés et préparés par les bénévoles afin d'être redistribués dans de bonnes conditions.",
+      "L'organisation d'une telle collecte demande une préparation importante. Il faut informer les habitants, coordonner les points de dépôt, vérifier les dates de consommation, séparer les produits par catégorie et préparer les paniers destinés aux familles. Chaque étape repose sur une logistique précise et sur l'engagement régulier des personnes impliquées.",
+      "Pour BZ Family, cette collecte n'est pas seulement une réponse ponctuelle à une urgence sociale. Elle s'inscrit dans une démarche plus large de solidarité de proximité, où les habitants deviennent eux-mêmes acteurs de l'entraide locale. Cette dynamique renforce la confiance entre les familles, les bénévoles et les structures partenaires.",
+      "Les produits récoltés permettront d'assurer plusieurs distributions dans les semaines à venir. L'association souhaite continuer à développer ce type d'initiative afin de maintenir un soutien régulier, tout en sensibilisant le public aux besoins réels présents dans le quartier.",
     ],
   },
   "programme-accompagnement-scolaire": {
-    author: "Equipe pedagogique",
+    author: "Équipe pédagogique",
     readingTime: "5 min",
     body: [
-      "BZ Family lance un nouveau programme d'accompagnement scolaire gratuit destine aux enfants du quartier. Ce dispositif a ete pense pour offrir un soutien regulier aux eleves qui ont besoin d'aide dans leurs devoirs, d'un cadre de travail calme ou d'un accompagnement methodologique plus personnalise.",
-      "Le programme concerne dans un premier temps cinquante enfants. Les seances sont organisees plusieurs fois par semaine avec l'aide de benevoles, d'etudiants et de personnes ayant une experience dans l'accompagnement educatif. L'objectif n'est pas de remplacer l'ecole, mais de completer le travail realise en classe en apportant un suivi de proximite.",
-      "Chaque enfant est accueilli dans un cadre bienveillant, avec une attention particuliere portee a son rythme, a ses difficultes et a sa confiance en lui. Les benevoles aident les participants a comprendre les consignes, a organiser leur travail et a progresser dans les matieres ou ils rencontrent le plus de blocages.",
-      "Au-dela de l'aide aux devoirs, ce programme vise aussi a renforcer le lien avec les familles. Les parents peuvent echanger avec l'association, suivre l'evolution de leur enfant et exprimer leurs besoins. Cette relation de confiance est essentielle pour construire un accompagnement durable.",
-      "L'association prevoit d'evaluer regulierement le dispositif afin de l'adapter aux retours des enfants, des familles et des benevoles. Si les resultats sont positifs, le programme pourra etre etendu a davantage de participants et enrichi avec des ateliers de lecture, d'orientation ou de decouverte culturelle.",
+      "BZ Family lance un nouveau programme d'accompagnement scolaire gratuit destiné aux enfants du quartier. Ce dispositif a été pensé pour offrir un soutien régulier aux élèves qui ont besoin d'aide dans leurs devoirs, d'un cadre de travail calme ou d'un accompagnement méthodologique plus personnalisé.",
+      "Le programme concerne dans un premier temps cinquante enfants. Les séances sont organisées plusieurs fois par semaine avec l'aide de bénévoles, d'étudiants et de personnes ayant une expérience dans l'accompagnement éducatif. L'objectif n'est pas de remplacer l'école, mais de compléter le travail réalisé en classe en apportant un suivi de proximité.",
+      "Chaque enfant est accueilli dans un cadre bienveillant, avec une attention particulière portée à son rythme, à ses difficultés et à sa confiance en lui. Les bénévoles aident les participants à comprendre les consignes, à organiser leur travail et à progresser dans les matières où ils rencontrent le plus de blocages.",
+      "Au-delà de l'aide aux devoirs, ce programme vise aussi à renforcer le lien avec les familles. Les parents peuvent échanger avec l'association, suivre l'évolution de leur enfant et exprimer leurs besoins. Cette relation de confiance est essentielle pour construire un accompagnement durable.",
+      "L'association prévoit d'évaluer régulièrement le dispositif afin de l'adapter aux retours des enfants, des familles et des bénévoles. Si les résultats sont positifs, le programme pourra être étendu à davantage de participants et enrichi avec des ateliers de lecture, d'orientation ou de découverte culturelle.",
     ],
   },
   "fete-quartier-succes": {
-    author: "Coordination evenements",
+    author: "Coordination événements",
     readingTime: "4 min",
     body: [
-      "La fete de quartier organisee par BZ Family a reuni plus de cinq cents personnes autour d'un moment convivial et intergenerationnel. Habitants, familles, benevoles, partenaires et visiteurs se sont retrouves pour partager une journee placee sous le signe de la rencontre, de la musique et de la solidarite.",
-      "L'evenement proposait plusieurs espaces : animations pour les enfants, stands d'information, repas partage, ateliers participatifs et temps d'echange avec les membres de l'association. Cette organisation a permis a chacun de trouver sa place, qu'il vienne pour participer, aider, decouvrir l'association ou simplement passer un moment agreable.",
-      "La preparation de cette fete a demande une forte mobilisation. Les benevoles ont participe a l'installation, a l'accueil du public, a la gestion des stands, a la securite des espaces et au rangement final. Leur engagement a ete determinant pour assurer le bon deroulement de la journee.",
-      "Cette reussite montre l'importance des evenements locaux dans la construction du lien social. En creant un espace ouvert et accessible, BZ Family permet aux habitants de se rencontrer autrement, de mieux connaitre les actions menees et de s'impliquer progressivement dans la vie du quartier.",
-      "L'association souhaite s'appuyer sur cette dynamique pour preparer les prochains rendez-vous. Les retours recueillis permettront d'ameliorer l'organisation, de proposer de nouvelles activites et de continuer a faire de ces temps forts des moments utiles pour toute la communaute.",
+      "La fête de quartier organisée par BZ Family a réuni plus de cinq cents personnes autour d'un moment convivial et intergénérationnel. Habitants, familles, bénévoles, partenaires et visiteurs se sont retrouvés pour partager une journée placée sous le signe de la rencontre, de la musique et de la solidarité.",
+      "L'événement proposait plusieurs espaces : animations pour les enfants, stands d'information, repas partagé, ateliers participatifs et temps d'échange avec les membres de l'association. Cette organisation a permis à chacun de trouver sa place, qu'il vienne pour participer, aider, découvrir l'association ou simplement passer un moment agréable.",
+      "La préparation de cette fête a demandé une forte mobilisation. Les bénévoles ont participé à l'installation, à l'accueil du public, à la gestion des stands, à la sécurité des espaces et au rangement final. Leur engagement a été déterminant pour assurer le bon déroulement de la journée.",
+      "Cette réussite montre l'importance des événements locaux dans la construction du lien social. En créant un espace ouvert et accessible, BZ Family permet aux habitants de se rencontrer autrement, de mieux connaître les actions menées et de s'impliquer progressivement dans la vie du quartier.",
+      "L'association souhaite s'appuyer sur cette dynamique pour préparer les prochains rendez-vous. Les retours recueillis permettront d'améliorer l'organisation, de proposer de nouvelles activités et de continuer à faire de ces temps forts des moments utiles pour toute la communauté.",
     ],
   },
 };
@@ -109,7 +109,7 @@ export default async function ArticleDetailPage({ params }: Props) {
         <Button variant="ghost" size="sm" asChild className="mb-8">
           <Link href="/actualites">
             <ArrowLeft className="h-4 w-4" />
-            Retour aux actualites
+            Retour aux actualités
           </Link>
         </Button>
 
@@ -157,7 +157,7 @@ export default async function ArticleDetailPage({ params }: Props) {
                   {detail.readingTime}
                 </p>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  Article publie par {detail.author.toLowerCase()}.
+                  Article publié par {detail.author.toLowerCase()}.
                 </p>
               </div>
 
@@ -200,7 +200,7 @@ export default async function ArticleDetailPage({ params }: Props) {
               </h2>
             </div>
             <Button variant="outline" asChild>
-              <Link href="/actualites">Toutes les actualites</Link>
+              <Link href="/actualites">Toutes les actualités</Link>
             </Button>
           </div>
 

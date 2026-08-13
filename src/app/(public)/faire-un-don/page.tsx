@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Gift, Heart, ShieldCheck } from "lucide-react";
 import { DonationForm } from "@/components/forms/DonationForm";
 import { Badge } from "@/components/ui/badge";
