@@ -3,10 +3,10 @@ import Link from "next/link";
 import type { Event } from "@prisma/client";
 import { ArrowUpRight, Calendar, Clock, MapPin, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { FadeUp, SectionIntro } from "@/components/shared/FadeUp";
+import { FadeUp } from "@/components/shared/FadeUp";
 import { MediaImage } from "@/components/shared/MediaImage";
 import prisma from "@/lib/prisma";
-import { getEventImage } from "@/lib/data/images";
+import { getEventImage, siteImages } from "@/lib/data/images";
 import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -113,34 +113,68 @@ export default async function EventsPage() {
 
   return (
     <>
-      <section className="section-padding relative overflow-hidden bg-encre text-white">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(30,64,175,0.35),transparent_38%),radial-gradient(circle_at_80%_0%,rgba(245,158,11,0.16),transparent_30%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,15,28,0.35),rgba(8,15,28,0.95))]" />
-        <div className="container-bz">
-          <div className="relative z-10">
-            <SectionIntro
-              label="Agenda"
-              title="Nos événements"
-              description="Ateliers, marches solidaires et rencontres de terrain : retrouvez les prochains rendez-vous de BZ Family et inscrivez-vous en quelques clics."
-              theme="dark"
-            />
+      <section className="relative isolate overflow-hidden bg-encre text-white">
+        <MediaImage
+          src={siteImages.events.cuisine}
+          alt="Atelier solidaire organisé par BZ Family"
+          priority
+          sizes="100vw"
+          containerClassName="absolute inset-0 -z-20"
+          className="scale-105 opacity-70"
+        />
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(8,15,28,0.98)_0%,rgba(8,15,28,0.82)_45%,rgba(8,15,28,0.35)_100%)]" />
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_20%_20%,rgba(217,119,6,0.30),transparent_36%),radial-gradient(circle_at_80%_10%,rgba(59,130,246,0.25),transparent_34%)]" />
+        <div className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-encre to-transparent" />
 
-            <FadeUp delay={0.35}>
-              <div className="flex flex-wrap gap-3">
-                <Link
-                  href="#evenements-a-venir"
-                  className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-encre transition hover:bg-accent hover:text-white"
-                >
-                  À venir
-                </Link>
-                <Link
-                  href="#evenements-passes"
-                  className="rounded-full border border-white/20 px-5 py-3 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10"
-                >
-                  Passés
-                </Link>
+        <div className="container-bz relative grid min-h-[72vh] items-end gap-10 py-24 lg:grid-cols-[1.05fr_0.75fr] lg:py-32">
+          <div className="max-w-4xl">
+            <p className="kicker mb-6 text-white/70 before:from-accent before:to-accent/20">
+              Agenda
+            </p>
+            <h1 className="font-display text-[clamp(3rem,7vw,6.5rem)] font-bold leading-[0.95] tracking-tight">
+              Nos événements
+              <span className="block text-gradient">solidaires</span>
+            </h1>
+            <p className="mt-7 max-w-2xl text-lg leading-8 text-white/70">
+              Ateliers, marches solidaires et rencontres de terrain : retrouvez
+              les prochains rendez-vous de BZ Family et inscrivez-vous en
+              quelques clics.
+            </p>
+
+            <div className="mt-10 flex flex-wrap gap-3">
+              <Link
+                href="#evenements-a-venir"
+                className="rounded-full bg-white px-5 py-3 text-sm font-semibold text-encre shadow-soft transition hover:bg-accent hover:text-white"
+              >
+                À venir
+              </Link>
+              <Link
+                href="#evenements-passes"
+                className="rounded-full border border-white/25 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:border-white hover:bg-white/15"
+              >
+                Passés
+              </Link>
+            </div>
+          </div>
+
+          <div className="hidden rounded-[2rem] border border-white/15 bg-white/10 p-6 shadow-card backdrop-blur-md lg:block">
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-white/50">
+              Agenda en bref
+            </p>
+            <div className="mt-6 grid gap-4">
+              <div className="rounded-2xl border border-white/10 bg-white/10 p-5">
+                <span className="text-3xl font-bold">{upcoming.length}</span>
+                <p className="mt-1 text-sm text-white/60">
+                  rendez-vous à venir
+                </p>
               </div>
-            </FadeUp>
+              <div className="rounded-2xl border border-white/10 bg-white/10 p-5">
+                <span className="text-3xl font-bold">{past.length}</span>
+                <p className="mt-1 text-sm text-white/60">
+                  actions déjà organisées
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
