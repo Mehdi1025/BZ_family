@@ -227,7 +227,7 @@ export default async function EventDetailPage({ params }: Props) {
   const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(siteConfig.address)}&output=embed`;
 
   return (
-    <article className="section-padding">
+    <article className="pb-24 pt-10 lg:pb-32 lg:pt-14 xl:pb-40">
       <div className="container-bz">
         <Button variant="ghost" size="sm" asChild className="mb-8">
           <Link href="/evenements">

@@ -20,6 +20,28 @@ type ArticleDetail = {
   body: string[];
 };
 
+function FacebookMark() {
+  return (
+    <span
+      aria-hidden="true"
+      className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-[#1877F2] text-[11px] font-bold leading-none text-white"
+    >
+      f
+    </span>
+  );
+}
+
+function LinkedInMark() {
+  return (
+    <span
+      aria-hidden="true"
+      className="inline-flex h-4 w-4 items-center justify-center rounded-[3px] bg-[#0A66C2] text-[9px] font-bold leading-none text-white"
+    >
+      in
+    </span>
+  );
+}
+
 const articleDetails: Record<string, ArticleDetail> = {
   "collecte-alimentaire-printemps": {
     author: "Équipe BZ Family",
@@ -104,7 +126,7 @@ export default async function ArticleDetailPage({ params }: Props) {
   const pageUrl = `${siteConfig.url}/actualites/${article.slug}`;
 
   return (
-    <article className="section-padding">
+    <article className="pb-24 pt-10 lg:pb-32 lg:pt-14 xl:pb-40">
       <div className="container-bz">
         <Button variant="ghost" size="sm" asChild className="mb-8">
           <Link href="/actualites">
@@ -173,6 +195,7 @@ export default async function ArticleDetailPage({ params }: Props) {
                       target="_blank"
                       rel="noreferrer"
                     >
+                      <FacebookMark />
                       Facebook
                     </a>
                   </Button>
@@ -182,6 +205,7 @@ export default async function ArticleDetailPage({ params }: Props) {
                       target="_blank"
                       rel="noreferrer"
                     >
+                      <LinkedInMark />
                       LinkedIn
                     </a>
                   </Button>

@@ -34,13 +34,60 @@ export const testimonials = [
   },
 ];
 
+export const partnerTestimonials = [
+  {
+    id: "1",
+    quote:
+      "BZ Family est un relais de confiance sur le terrain. L'association transforme les soutiens reçus en actions concrètes, visibles et utiles pour les familles du quartier.",
+    author: "Sophie M.",
+    role: "Partenaire local",
+    organization: "Réseau associatif",
+  },
+];
+
 export const partners = [
-  { id: "1", name: "Mairie de Paris", logoUrl: "/images/partners/mairie.svg" },
-  { id: "2", name: "Croix-Rouge", logoUrl: "/images/partners/croix-rouge.svg" },
-  { id: "3", name: "Secours Populaire", logoUrl: "/images/partners/secours.svg" },
-  { id: "4", name: "Banque Alimentaire", logoUrl: "/images/partners/banque.svg" },
-  { id: "5", name: "France Bénévolat", logoUrl: "/images/partners/fb.svg" },
-  { id: "6", name: "Fondation de France", logoUrl: "/images/partners/fdf.svg" },
+  {
+    id: "1",
+    name: "Mairie de Paris",
+    logoUrl: "/images/partners/mairie-paris.png",
+    website: "https://www.paris.fr",
+    tier: "Partenaire institutionnel",
+  },
+  {
+    id: "2",
+    name: "Croix-Rouge française",
+    logoUrl: "/images/partners/croix-rouge.jpg",
+    website: "https://www.croix-rouge.fr",
+    tier: "Association partenaire",
+  },
+  {
+    id: "3",
+    name: "Secours populaire français",
+    logoUrl: "/images/partners/secours-populaire.png",
+    website: "https://www.secourspopulaire.fr",
+    tier: "Association partenaire",
+  },
+  {
+    id: "4",
+    name: "Banque Alimentaire",
+    logoUrl: "/images/partners/banque-alimentaire.png",
+    website: "https://www.banquealimentaire.org",
+    tier: "Partenaire solidarité",
+  },
+  {
+    id: "5",
+    name: "France Bénévolat",
+    logoUrl: "/images/partners/france-benevolat.png",
+    website: "https://www.francebenevolat.org",
+    tier: "Réseau bénévole",
+  },
+  {
+    id: "6",
+    name: "Fondation de France",
+    logoUrl: "/images/partners/fondation-de-france.jpg",
+    website: "https://www.fondationdefrance.org",
+    tier: "Mécène",
+  },
 ];
 
 export const latestNews = [

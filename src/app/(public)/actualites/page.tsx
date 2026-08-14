@@ -23,6 +23,7 @@ interface NewsPageProps {
 export default async function NewsPage({ searchParams }: NewsPageProps) {
   const params = await searchParams;
   const selectedCategory = params?.categorie ?? "Toutes";
+  const heroArticle = latestNews[0];
   const filteredArticles =
     selectedCategory === "Toutes"
       ? latestNews
@@ -32,24 +33,52 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-encre text-white">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(30,64,175,0.35),transparent_35%),radial-gradient(circle_at_80%_0%,rgba(245,158,11,0.16),transparent_30%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,15,28,0.35),rgba(8,15,28,0.95))]" />
+      <section className="relative isolate overflow-hidden bg-encre text-white">
+        <MediaImage
+          src={heroArticle.imageUrl}
+          alt={heroArticle.title}
+          priority
+          sizes="100vw"
+          containerClassName="absolute inset-0 -z-20"
+          className="scale-105 opacity-70"
+        />
+        <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(8,15,28,0.98)_0%,rgba(8,15,28,0.82)_45%,rgba(8,15,28,0.34)_100%)]" />
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_18%,rgba(30,64,175,0.34),transparent_36%),radial-gradient(circle_at_78%_12%,rgba(217,119,6,0.24),transparent_32%)]" />
+        <div className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-encre to-transparent" />
 
-        <div className="container-bz relative py-24 lg:py-32">
-          <p className="kicker text-white/60 before:from-secondary before:to-secondary/20">
-            Actualités
-          </p>
-          <div className="mt-6 max-w-3xl">
-            <h1 className="font-display text-4xl font-bold leading-tight tracking-tight md:text-5xl lg:text-6xl">
+        <div className="container-bz relative grid min-h-[72vh] items-end gap-10 py-24 lg:grid-cols-[1.05fr_0.75fr] lg:py-32">
+          <div className="max-w-4xl">
+            <p className="kicker mb-6 text-white/70 before:from-secondary before:to-secondary/20">
+              Actualités
+            </p>
+            <h1 className="font-display text-[clamp(3rem,7vw,6.5rem)] font-bold leading-[0.95] tracking-tight">
               Nos nouvelles
               <span className="block text-gradient">du terrain</span>
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-white/70">
+            <p className="mt-7 max-w-2xl text-lg leading-8 text-white/70">
               Retrouvez les dernières actions, rencontres et initiatives menées
               avec les familles, les bénévoles et les partenaires du quartier.
             </p>
           </div>
+
+          <Link
+            href={`/actualites/${heroArticle.slug}`}
+            className="hidden rounded-[2rem] border border-white/15 bg-white/10 p-6 shadow-card backdrop-blur-md transition hover:-translate-y-1 hover:bg-white/15 lg:block"
+          >
+            <span className="rounded-full bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-encre">
+              Dernier article
+            </span>
+            <h2 className="mt-5 font-display text-3xl font-bold leading-tight text-white">
+              {heroArticle.title}
+            </h2>
+            <p className="mt-4 line-clamp-3 text-sm leading-relaxed text-white/60">
+              {heroArticle.excerpt}
+            </p>
+            <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-white">
+              Lire l&apos;article
+              <ArrowRight className="h-4 w-4" />
+            </span>
+          </Link>
         </div>
       </section>
 
