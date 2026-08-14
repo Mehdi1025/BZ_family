@@ -15,13 +15,10 @@ function Counter({
 }) {
   const [count, setCount] = useState(0);
   const reduced = useReducedMotion();
+  const displayValue = reduced && inView ? value : count;
 
   useEffect(() => {
-    if (!inView) return;
-    if (reduced) {
-      setCount(value);
-      return;
-    }
+    if (!inView || reduced) return;
     const duration = 2000;
     const startTime = performance.now();
     let frame: number;
@@ -37,7 +34,7 @@ function Counter({
 
   return (
     <>
-      {count.toLocaleString("fr-FR")}
+      {displayValue.toLocaleString("fr-FR")}
       {suffix}
     </>
   );

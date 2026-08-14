@@ -32,6 +32,7 @@ export function ContactForm() {
   });
 
   async function onSubmit(data: ContactFormData) {
+    void data;
     setStatus("loading");
     try {
       // TODO: connect to contact API route

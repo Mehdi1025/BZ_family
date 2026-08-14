@@ -61,7 +61,7 @@ export function DonationForm() {
         }),
       });
       const { url } = await res.json();
-      if (url) window.location.href = url;
+      if (url) window.location.assign(url);
       else throw new Error("Pas d'URL Stripe");
     } catch {
       setStatus("error");

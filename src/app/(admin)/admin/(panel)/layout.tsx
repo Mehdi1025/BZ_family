@@ -1,9 +1,11 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { auth, signOut } from "@/lib/auth";
+import { signOut } from "@/lib/auth";
+import { requireAdminSession } from "@/lib/admin";
 import {
   Calendar,
+  ClipboardList,
   Heart,
+  ImageIcon,
   LayoutDashboard,
   LogOut,
   Newspaper,
@@ -16,6 +18,8 @@ export const dynamic = "force-dynamic";
 
 const navItems = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/actions", label: "Actions", icon: ClipboardList },
+  { href: "/admin/galerie", label: "Galerie", icon: ImageIcon },
   { href: "/admin/evenements", label: "Événements", icon: Calendar },
   { href: "/admin/benevoles", label: "Bénévoles", icon: Users },
   { href: "/admin/actualites", label: "Actualités", icon: Newspaper },
@@ -27,24 +31,15 @@ export default async function AdminPanelLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
-  const role = (session?.user as { role?: string } | undefined)?.role;
-
-  if (!session) {
-    redirect("/admin/login");
-  }
-
-  if (role !== "ADMIN") {
-    redirect("/");
-  }
+  await requireAdminSession();
 
   return (
     <div className="flex min-h-screen">
-      <aside className="hidden w-64 flex-col border-r border-border bg-foreground text-white lg:flex">
+      <aside className="hidden w-72 flex-col border-r border-border bg-foreground text-white lg:flex">
         <div className="border-b border-white/10 p-6">
           <Link href="/admin/dashboard" className="flex items-center gap-3">
             <Logo variant="light" size="sm" />
-            <span className="text-xl font-bold">Admin</span>
+            <span className="text-xl font-bold">Administration</span>
           </Link>
         </div>
         <nav className="flex-1 space-y-1 p-4">

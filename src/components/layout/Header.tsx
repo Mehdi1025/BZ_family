@@ -17,10 +17,6 @@ export function Header() {
   const isHome = pathname === "/";
 
   useEffect(() => {
-    setMobileOpen(false);
-  }, [pathname]);
-
-  useEffect(() => {
     document.body.style.overflow = mobileOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
@@ -133,7 +129,9 @@ export function Header() {
                   <Link href="/faire-un-don">Faire un don</Link>
                 </Button>
                 <Button variant="outline" size="lg" asChild>
-                  <Link href="/devenir-benevole">Devenir bénévole</Link>
+                  <Link href="/devenir-benevole" onClick={() => setMobileOpen(false)}>
+                    Devenir bénévole
+                  </Link>
                 </Button>
               </div>
             </nav>
