@@ -19,7 +19,11 @@ const contactSchema = z.object({
 
 type ContactFormData = z.infer<typeof contactSchema>;
 
-export function ContactForm() {
+interface ContactFormProps {
+  defaultSubject?: string;
+}
+
+export function ContactForm({ defaultSubject = "" }: ContactFormProps) {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   const {
@@ -29,13 +33,26 @@ export function ContactForm() {
     formState: { errors },
   } = useForm<ContactFormData>({
     resolver: zodResolver(contactSchema),
+    defaultValues: {
+      subject: defaultSubject,
+    },
   });
 
   async function onSubmit(data: ContactFormData) {
     setStatus("loading");
     try {
-      // TODO: connect to contact API route
-      await new Promise((r) => setTimeout(r, 1000));
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error("Contact request failed");
+      }
+
       setStatus("success");
       reset();
     } catch {
