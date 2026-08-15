@@ -1,6 +1,8 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { SectionIntro } from "@/components/shared/FadeUp";
-import { GalleryClient } from "./GalleryClient";
+import prisma from "@/lib/prisma";
+import { galleryItems as fallbackGalleryItems } from "@/lib/data/ramzi-pages";
+import { GalleryClient, type GalleryItem } from "./GalleryClient";
 
 export const metadata: Metadata = {
   title: "Galerie",
@@ -8,7 +10,29 @@ export const metadata: Metadata = {
     "Revivez les moments forts de BZ Family : événements, actions solidaires, bénévoles et vie de quartier.",
 };
 
-export default function GalleryPage() {
+export default async function GalleryPage() {
+  let items: GalleryItem[] = [];
+
+  try {
+    const media = await prisma.galleryMedia.findMany({
+      where: { type: "IMAGE" },
+      orderBy: { createdAt: "desc" },
+    });
+
+    items = media.map((item) => ({
+      id: item.id,
+      title: item.albumTitle,
+      category: item.category,
+      src: item.mediaUrl,
+    }));
+  } catch {
+    items = [];
+  }
+
+  if (items.length === 0) {
+    items = fallbackGalleryItems;
+  }
+
   return (
     <>
       <section className="relative overflow-hidden bg-encre text-white">
@@ -25,7 +49,7 @@ export default function GalleryPage() {
 
       <section className="section-padding bg-papier">
         <div className="container-bz">
-          <GalleryClient />
+          <GalleryClient items={items} />
         </div>
       </section>
     </>

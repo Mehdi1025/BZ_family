@@ -5,23 +5,35 @@ import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MediaImage } from "@/components/shared/MediaImage";
 import { cn } from "@/lib/utils";
-import { galleryFilters, galleryItems } from "@/lib/data/ramzi-pages";
 
-type GalleryItem = (typeof galleryItems)[number];
+export type GalleryItem = {
+  id: string;
+  title: string;
+  category: string;
+  src: string;
+};
 
-export function GalleryClient() {
-  const [activeFilter, setActiveFilter] = useState<(typeof galleryFilters)[number]>("Tout");
+type GalleryClientProps = {
+  items: GalleryItem[];
+};
+
+export function GalleryClient({ items }: GalleryClientProps) {
+  const filters = useMemo(
+    () => ["Tout", ...Array.from(new Set(items.map((item) => item.category)))],
+    [items]
+  );
+  const [activeFilter, setActiveFilter] = useState<string>("Tout");
   const [selected, setSelected] = useState<GalleryItem | null>(null);
 
   const visibleItems = useMemo(() => {
-    if (activeFilter === "Tout") return galleryItems;
-    return galleryItems.filter((item) => item.category === activeFilter);
-  }, [activeFilter]);
+    if (activeFilter === "Tout") return items;
+    return items.filter((item) => item.category === activeFilter);
+  }, [activeFilter, items]);
 
   return (
     <>
       <div className="mb-10 flex flex-wrap gap-3">
-        {galleryFilters.map((filter) => (
+        {filters.map((filter) => (
           <button
             key={filter}
             type="button"
@@ -38,34 +50,43 @@ export function GalleryClient() {
         ))}
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {visibleItems.map((item, index) => (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => setSelected(item)}
-            className={cn(
-              "group overflow-hidden rounded-[1.75rem] border border-line bg-white text-left shadow-soft transition-all hover:-translate-y-1 hover:shadow-card",
-              index % 5 === 0 && "lg:row-span-2"
-            )}
-          >
-            <MediaImage
-              src={item.src}
-              alt={item.title}
-              containerClassName={cn("aspect-[4/3]", index % 5 === 0 && "lg:aspect-[4/5]")}
-              sizes="(max-width: 768px) 100vw, 33vw"
-            />
-            <div className="p-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
-                {item.category}
-              </p>
-              <h2 className="mt-2 font-display text-xl font-bold text-encre">
-                {item.title}
-              </h2>
-            </div>
-          </button>
-        ))}
-      </div>
+      {visibleItems.length === 0 ? (
+        <div className="rounded-[1.75rem] border border-dashed border-line bg-white px-6 py-14 text-center text-muted-foreground shadow-soft">
+          Aucun média n&apos;a encore été ajouté dans la galerie.
+        </div>
+      ) : (
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {visibleItems.map((item, index) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setSelected(item)}
+              className={cn(
+                "group overflow-hidden rounded-[1.75rem] border border-line bg-white text-left shadow-soft transition-all hover:-translate-y-1 hover:shadow-card",
+                index % 5 === 0 && "lg:row-span-2"
+              )}
+            >
+              <MediaImage
+                src={item.src}
+                alt={item.title}
+                containerClassName={cn(
+                  "aspect-[4/3]",
+                  index % 5 === 0 && "lg:aspect-[4/5]"
+                )}
+                sizes="(max-width: 768px) 100vw, 33vw"
+              />
+              <div className="p-5">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">
+                  {item.category}
+                </p>
+                <h2 className="mt-2 font-display text-xl font-bold text-encre">
+                  {item.title}
+                </h2>
+              </div>
+            </button>
+          ))}
+        </div>
+      )}
 
       {selected && (
         <div

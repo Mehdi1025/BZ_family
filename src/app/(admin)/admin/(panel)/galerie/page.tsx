@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import prisma from "@/lib/prisma";
 import { requireAdminSession } from "@/lib/admin";
 import { formatDate } from "@/lib/utils";
+import { galleryItems as fallbackGalleryItems } from "@/lib/data/ramzi-pages";
 
 export default async function AdminGalleryPage() {
   await requireAdminSession();
@@ -33,16 +34,39 @@ export default async function AdminGalleryPage() {
     });
 
     revalidatePath("/admin/galerie");
+    revalidatePath("/galerie");
   }
 
   async function deleteMedia(formData: FormData) {
     "use server";
     await requireAdminSession();
+
     const id = formData.get("id")?.toString();
     if (!id) return;
 
     await prisma.galleryMedia.delete({ where: { id } });
     revalidatePath("/admin/galerie");
+    revalidatePath("/galerie");
+  }
+
+  async function importDemoGallery() {
+    "use server";
+    await requireAdminSession();
+
+    const existingCount = await prisma.galleryMedia.count();
+    if (existingCount > 0) return;
+
+    await prisma.galleryMedia.createMany({
+      data: fallbackGalleryItems.map((item) => ({
+        albumTitle: item.title,
+        mediaUrl: item.src,
+        category: item.category,
+        type: "IMAGE",
+      })),
+    });
+
+    revalidatePath("/admin/galerie");
+    revalidatePath("/galerie");
   }
 
   let media: Awaited<ReturnType<typeof prisma.galleryMedia.findMany>> = [];
@@ -54,10 +78,11 @@ export default async function AdminGalleryPage() {
       prisma.galleryMedia.count({ where: { type: "IMAGE" } }),
       prisma.galleryMedia.count({ where: { type: "VIDEO" } }),
     ]);
+
     media = allMedia;
     stats = { total: allMedia.length, images: imageCount, videos: videoCount };
   } catch {
-    // Database unavailable: keep page readable.
+    // Keep the page readable if the database is temporarily unavailable.
   }
 
   return (
@@ -100,9 +125,9 @@ export default async function AdminGalleryPage() {
         <CardHeader>
           <CardTitle>Ajouter un média</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           <form action={addMedia} className="grid gap-4 md:grid-cols-2">
-            <Input name="albumTitle" placeholder="Titre de l’album" required />
+            <Input name="albumTitle" placeholder="Titre de l'album" required />
             <Input name="category" placeholder="Catégorie" required />
             <Input
               name="mediaUrl"
@@ -121,6 +146,12 @@ export default async function AdminGalleryPage() {
             <div className="md:col-span-2">
               <Button type="submit">Ajouter le média</Button>
             </div>
+          </form>
+
+          <form action={importDemoGallery}>
+            <Button type="submit" variant="secondary">
+              Importer la galerie de démonstration
+            </Button>
           </form>
         </CardContent>
       </Card>
