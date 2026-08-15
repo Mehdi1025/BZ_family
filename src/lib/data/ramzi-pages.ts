@@ -58,7 +58,11 @@ export const actionDetails = [
       "Les bénévoles organisent les collectes, trient les produits, préparent les paniers et assurent les distributions dans un cadre bienveillant. L'objectif est d'apporter une aide concrète, mais aussi d'identifier les autres besoins : isolement, démarches, soutien scolaire ou accompagnement social.",
       "Cette action repose sur la confiance entre habitants, partenaires locaux et bénévoles. Chaque don est utilisé pour renforcer la capacité de l'association à agir vite et au plus près du terrain.",
     ],
-    photos: [siteImages.actions.alimentaire, "/images/gallery/2.jpg", "/images/gallery/7.jpg"],
+    photos: [
+      siteImages.actions.alimentaire,
+      "/images/gallery/2.jpg",
+      "/images/gallery/7.jpg",
+    ],
   },
   {
     slug: "accompagnement-scolaire",
@@ -75,7 +79,11 @@ export const actionDetails = [
       "Les séances sont encadrées par des bénévoles formés, avec une attention portée au rythme de chaque enfant. Le but n'est pas seulement de terminer un exercice, mais de redonner confiance et de créer des habitudes de travail durables.",
       "Les familles sont également associées à la démarche. L'association reste disponible pour échanger, orienter et construire un accompagnement cohérent autour de l'enfant.",
     ],
-    photos: [siteImages.actions.scolaire, "/images/gallery/5.jpg", "/images/gallery/8.jpg"],
+    photos: [
+      siteImages.actions.scolaire,
+      "/images/gallery/5.jpg",
+      "/images/gallery/8.jpg",
+    ],
   },
   {
     slug: "lien-social",
@@ -92,7 +100,11 @@ export const actionDetails = [
       "Ateliers cuisine, fêtes de quartier, sorties familiales et rencontres bénévoles sont organisés tout au long de l'année. Ces rendez-vous simples créent une dynamique collective qui rend les autres actions plus fortes.",
       "Chaque événement est pensé comme une porte d'entrée : venir une première fois, rencontrer l'équipe, proposer une idée, puis peut-être devenir bénévole à son tour.",
     ],
-    photos: [siteImages.actions.social, "/images/gallery/1.jpg", "/images/gallery/4.jpg"],
+    photos: [
+      siteImages.actions.social,
+      "/images/gallery/1.jpg",
+      "/images/gallery/4.jpg",
+    ],
   },
 ];
 

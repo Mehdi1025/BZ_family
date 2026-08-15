@@ -15,7 +15,7 @@ const sections = [
   },
   {
     title: "Données collectées",
-    text: "Nous pouvons collecter les informations transmises volontairement via les formulaires : nom, prénom, adresse email, téléphone, message, disponibilité bénévole ou informations nécessaires au traitement d'un don.",
+    text: "Nous pouvons collecter les informations transmises volontairement via les formulaires : nom, prénom, adresse e-mail, téléphone, message, disponibilité bénévole ou informations nécessaires au traitement d'un don.",
   },
   {
     title: "Finalités et base légale",

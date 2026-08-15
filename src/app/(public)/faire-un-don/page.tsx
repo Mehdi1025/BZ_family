@@ -47,7 +47,9 @@ export default function DonatePage() {
         <div className="container-bz grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
           <FadeUp>
             <div className="rounded-[2rem] border border-line bg-papier p-8">
-              <Badge variant="accent" className="mb-6">Impact direct</Badge>
+              <Badge variant="accent" className="mb-6">
+                Impact direct
+              </Badge>
               <h2 className="font-display text-4xl font-bold text-encre">
                 Où vont vos dons ?
               </h2>
