@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import type { Article } from "@prisma/client";
 import { ArrowRight, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { MediaImage } from "@/components/shared/MediaImage";
-import { latestNews } from "@/lib/data/mock";
+import prisma from "@/lib/prisma";
+import { getNewsImage } from "@/lib/data/images";
 import { formatDate } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -14,34 +16,57 @@ export const metadata: Metadata = {
     "Suivez l'actualité de BZ Family : actions, événements et impact local.",
 };
 
-const categories = ["Toutes", "Solidarité", "Éducation", "Événement"];
+export const dynamic = "force-dynamic";
 
 interface NewsPageProps {
   searchParams?: Promise<{ categorie?: string }>;
 }
 
+function getArticleImage(article: Article) {
+  return article.imageUrl ?? getNewsImage(article.slug);
+}
+
 export default async function NewsPage({ searchParams }: NewsPageProps) {
   const params = await searchParams;
   const selectedCategory = params?.categorie ?? "Toutes";
-  const heroArticle = latestNews[0];
+
+  const articles = await prisma.article.findMany({
+    where: {
+      publishedAt: {
+        not: null,
+      },
+    },
+    orderBy: {
+      publishedAt: "desc",
+    },
+  });
+
+  const categories = [
+    "Toutes",
+    ...Array.from(new Set(articles.map((article) => article.category))).filter(Boolean),
+  ];
+
+  const heroArticle = articles[0];
   const filteredArticles =
     selectedCategory === "Toutes"
-      ? latestNews
-      : latestNews.filter((article) => article.category === selectedCategory);
+      ? articles
+      : articles.filter((article) => article.category === selectedCategory);
   const featuredArticle = filteredArticles[0];
   const otherArticles = filteredArticles.slice(1);
 
   return (
     <>
       <section className="relative isolate overflow-hidden bg-encre text-white">
-        <MediaImage
-          src={heroArticle.imageUrl}
-          alt={heroArticle.title}
-          priority
-          sizes="100vw"
-          containerClassName="absolute inset-0 -z-20"
-          className="scale-105 opacity-70"
-        />
+        {heroArticle && (
+          <MediaImage
+            src={getArticleImage(heroArticle)}
+            alt={heroArticle.title}
+            priority
+            sizes="100vw"
+            containerClassName="absolute inset-0 -z-20"
+            className="scale-105 opacity-70"
+          />
+        )}
         <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(8,15,28,0.98)_0%,rgba(8,15,28,0.82)_45%,rgba(8,15,28,0.34)_100%)]" />
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_18%,rgba(30,64,175,0.34),transparent_36%),radial-gradient(circle_at_78%_12%,rgba(217,119,6,0.24),transparent_32%)]" />
         <div className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-encre to-transparent" />
@@ -61,24 +86,26 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
             </p>
           </div>
 
-          <Link
-            href={`/actualites/${heroArticle.slug}`}
-            className="hidden rounded-[2rem] border border-white/15 bg-white/10 p-6 shadow-card backdrop-blur-md transition hover:-translate-y-1 hover:bg-white/15 lg:block"
-          >
-            <span className="rounded-full bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-encre">
-              Dernier article
-            </span>
-            <h2 className="mt-5 font-display text-3xl font-bold leading-tight text-white">
-              {heroArticle.title}
-            </h2>
-            <p className="mt-4 line-clamp-3 text-sm leading-relaxed text-white/60">
-              {heroArticle.excerpt}
-            </p>
-            <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-white">
-              Lire l&apos;article
-              <ArrowRight className="h-4 w-4" />
-            </span>
-          </Link>
+          {heroArticle && (
+            <Link
+              href={`/actualites/${heroArticle.slug}`}
+              className="hidden rounded-[2rem] border border-white/15 bg-white/10 p-6 shadow-card backdrop-blur-md transition hover:-translate-y-1 hover:bg-white/15 lg:block"
+            >
+              <span className="rounded-full bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-encre">
+                Dernier article
+              </span>
+              <h2 className="mt-5 font-display text-3xl font-bold leading-tight text-white">
+                {heroArticle.title}
+              </h2>
+              <p className="mt-4 line-clamp-3 text-sm leading-relaxed text-white/60">
+                {heroArticle.excerpt}
+              </p>
+              <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-white">
+                Lire l&apos;article
+                <ArrowRight className="h-4 w-4" />
+              </span>
+            </Link>
+          )}
         </div>
       </section>
 
@@ -113,7 +140,7 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
                   className="group relative block min-h-[320px]"
                 >
                   <MediaImage
-                    src={featuredArticle.imageUrl}
+                    src={getArticleImage(featuredArticle)}
                     alt={featuredArticle.title}
                     containerClassName="h-full min-h-[320px] rounded-none"
                   />
@@ -123,7 +150,7 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
                     <Badge variant="accent">{featuredArticle.category}</Badge>
                     <span className="flex items-center gap-1 text-sm text-muted-foreground">
                       <Calendar className="h-4 w-4" />
-                      {formatDate(featuredArticle.publishedAt)}
+                      {formatDate(featuredArticle.publishedAt ?? featuredArticle.createdAt)}
                     </span>
                   </div>
                   <p className="kicker text-muted-foreground">À la une</p>
@@ -153,7 +180,7 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
                     >
                       <Link href={`/actualites/${article.slug}`}>
                         <MediaImage
-                          src={article.imageUrl}
+                          src={getArticleImage(article)}
                           alt={article.title}
                           containerClassName="aspect-[16/10]"
                         />
@@ -163,7 +190,7 @@ export default async function NewsPage({ searchParams }: NewsPageProps) {
                           <Badge variant="accent">{article.category}</Badge>
                           <span className="flex items-center gap-1 text-xs text-muted-foreground">
                             <Calendar className="h-3 w-3" />
-                            {formatDate(article.publishedAt)}
+                            {formatDate(article.publishedAt ?? article.createdAt)}
                           </span>
                         </div>
                         <Link href={`/actualites/${article.slug}`}>

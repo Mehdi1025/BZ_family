@@ -1,24 +1,21 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import type { Article } from "@prisma/client";
 import { ArrowLeft, ArrowRight, Calendar, Share2, UserRound } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { MediaImage } from "@/components/shared/MediaImage";
 import { getNewsImage } from "@/lib/data/images";
-import { latestNews } from "@/lib/data/mock";
+import prisma from "@/lib/prisma";
 import { formatDate, siteConfig } from "@/lib/utils";
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
-type ArticleDetail = {
-  author: string;
-  readingTime: string;
-  body: string[];
-};
+export const dynamic = "force-dynamic";
 
 function FacebookMark() {
   return (
@@ -42,66 +39,58 @@ function LinkedInMark() {
   );
 }
 
-const articleDetails: Record<string, ArticleDetail> = {
-  "collecte-alimentaire-printemps": {
-    author: "Équipe BZ Family",
-    readingTime: "4 min",
-    body: [
-      "La grande collecte alimentaire de printemps a mobilisé les habitants, les bénévoles et plusieurs partenaires locaux autour d'un objectif simple : renforcer les stocks de produits essentiels pour les familles accompagnées par l'association. Pendant plusieurs jours, chacun a pu contribuer selon ses moyens en déposant des denrées non périssables, des produits d'hygiène ou des articles de première nécessité.",
-      "Cette opération a permis de collecter plus de deux tonnes de produits. Au-delà du volume récolté, l'action a surtout montré la capacité du quartier à se mobiliser rapidement lorsqu'un besoin concret est identifié. Les dons ont ensuite été triés, rangés et préparés par les bénévoles afin d'être redistribués dans de bonnes conditions.",
-      "L'organisation d'une telle collecte demande une préparation importante. Il faut informer les habitants, coordonner les points de dépôt, vérifier les dates de consommation, séparer les produits par catégorie et préparer les paniers destinés aux familles. Chaque étape repose sur une logistique précise et sur l'engagement régulier des personnes impliquées.",
-      "Pour BZ Family, cette collecte n'est pas seulement une réponse ponctuelle à une urgence sociale. Elle s'inscrit dans une démarche plus large de solidarité de proximité, où les habitants deviennent eux-mêmes acteurs de l'entraide locale. Cette dynamique renforce la confiance entre les familles, les bénévoles et les structures partenaires.",
-      "Les produits récoltés permettront d'assurer plusieurs distributions dans les semaines à venir. L'association souhaite continuer à développer ce type d'initiative afin de maintenir un soutien régulier, tout en sensibilisant le public aux besoins réels présents dans le quartier.",
-    ],
-  },
-  "programme-accompagnement-scolaire": {
-    author: "Équipe pédagogique",
-    readingTime: "5 min",
-    body: [
-      "BZ Family lance un nouveau programme d'accompagnement scolaire gratuit destiné aux enfants du quartier. Ce dispositif a été pensé pour offrir un soutien régulier aux élèves qui ont besoin d'aide dans leurs devoirs, d'un cadre de travail calme ou d'un accompagnement méthodologique plus personnalisé.",
-      "Le programme concerne dans un premier temps cinquante enfants. Les séances sont organisées plusieurs fois par semaine avec l'aide de bénévoles, d'étudiants et de personnes ayant une expérience dans l'accompagnement éducatif. L'objectif n'est pas de remplacer l'école, mais de compléter le travail réalisé en classe en apportant un suivi de proximité.",
-      "Chaque enfant est accueilli dans un cadre bienveillant, avec une attention particulière portée à son rythme, à ses difficultés et à sa confiance en lui. Les bénévoles aident les participants à comprendre les consignes, à organiser leur travail et à progresser dans les matières où ils rencontrent le plus de blocages.",
-      "Au-delà de l'aide aux devoirs, ce programme vise aussi à renforcer le lien avec les familles. Les parents peuvent échanger avec l'association, suivre l'évolution de leur enfant et exprimer leurs besoins. Cette relation de confiance est essentielle pour construire un accompagnement durable.",
-      "L'association prévoit d'évaluer régulièrement le dispositif afin de l'adapter aux retours des enfants, des familles et des bénévoles. Si les résultats sont positifs, le programme pourra être étendu à davantage de participants et enrichi avec des ateliers de lecture, d'orientation ou de découverte culturelle.",
-    ],
-  },
-  "fete-quartier-succes": {
-    author: "Coordination événements",
-    readingTime: "4 min",
-    body: [
-      "La fête de quartier organisée par BZ Family a réuni plus de cinq cents personnes autour d'un moment convivial et intergénérationnel. Habitants, familles, bénévoles, partenaires et visiteurs se sont retrouvés pour partager une journée placée sous le signe de la rencontre, de la musique et de la solidarité.",
-      "L'événement proposait plusieurs espaces : animations pour les enfants, stands d'information, repas partagé, ateliers participatifs et temps d'échange avec les membres de l'association. Cette organisation a permis à chacun de trouver sa place, qu'il vienne pour participer, aider, découvrir l'association ou simplement passer un moment agréable.",
-      "La préparation de cette fête a demandé une forte mobilisation. Les bénévoles ont participé à l'installation, à l'accueil du public, à la gestion des stands, à la sécurité des espaces et au rangement final. Leur engagement a été déterminant pour assurer le bon déroulement de la journée.",
-      "Cette réussite montre l'importance des événements locaux dans la construction du lien social. En créant un espace ouvert et accessible, BZ Family permet aux habitants de se rencontrer autrement, de mieux connaître les actions menées et de s'impliquer progressivement dans la vie du quartier.",
-      "L'association souhaite s'appuyer sur cette dynamique pour préparer les prochains rendez-vous. Les retours recueillis permettront d'améliorer l'organisation, de proposer de nouvelles activités et de continuer à faire de ces temps forts des moments utiles pour toute la communauté.",
-    ],
-  },
-};
+function getArticleImage(article: Article) {
+  return article.imageUrl ?? getNewsImage(article.slug);
+}
 
-export function generateStaticParams() {
-  return latestNews.map((article) => ({ slug: article.slug }));
+function getArticleParagraphs(content: string) {
+  const paragraphs = content
+    .replace(/\r\n/g, "\n")
+    .split(/\n\s*\n/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+
+  return paragraphs.length > 0
+    ? paragraphs
+    : ["Le contenu complet de cet article sera disponible prochainement."];
+}
+
+function getReadingTime(content: string) {
+  const wordsCount = content.trim().split(/\s+/).filter(Boolean).length;
+  const minutes = Math.max(1, Math.ceil(wordsCount / 220));
+
+  return `${minutes} min`;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const article = latestNews.find((a) => a.slug === slug);
+  const article = await prisma.article.findFirst({
+    where: {
+      slug,
+      publishedAt: {
+        not: null,
+      },
+    },
+  });
+
   if (!article) return { title: "Article introuvable" };
 
-  const imageUrl = getNewsImage(slug);
+  const imageUrl = getArticleImage(article);
   const pageUrl = `${siteConfig.url}/actualites/${article.slug}`;
-  const title = `${article.title} | ${siteConfig.name}`;
+  const title = `${article.seoTitle ?? article.title} | ${siteConfig.name}`;
+  const description = article.seoDesc ?? article.excerpt;
 
   return {
     title,
-    description: article.excerpt,
+    description,
     alternates: {
       canonical: pageUrl,
     },
     openGraph: {
       title,
-      description: article.excerpt,
+      description,
       type: "article",
-      publishedTime: article.publishedAt,
+      publishedTime: article.publishedAt?.toISOString(),
       url: pageUrl,
       siteName: siteConfig.name,
       images: [
@@ -116,13 +105,34 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ArticleDetailPage({ params }: Props) {
   const { slug } = await params;
-  const article = latestNews.find((a) => a.slug === slug);
+  const article = await prisma.article.findFirst({
+    where: {
+      slug,
+      publishedAt: {
+        not: null,
+      },
+    },
+  });
+
   if (!article) notFound();
 
-  const detail = articleDetails[article.slug];
-  const relatedArticles = latestNews
-    .filter((relatedArticle) => relatedArticle.slug !== article.slug)
-    .slice(0, 2);
+  const articleAuthor = "Équipe BZ Family";
+  const articleParagraphs = getArticleParagraphs(article.content);
+  const relatedArticles = await prisma.article.findMany({
+    where: {
+      publishedAt: {
+        not: null,
+      },
+      slug: {
+        not: article.slug,
+      },
+      category: article.category,
+    },
+    orderBy: {
+      publishedAt: "desc",
+    },
+    take: 3,
+  });
   const pageUrl = `${siteConfig.url}/actualites/${article.slug}`;
 
   return (
@@ -140,11 +150,11 @@ export default async function ArticleDetailPage({ params }: Props) {
             <Badge variant="accent">{article.category}</Badge>
             <span className="flex items-center gap-1 text-sm text-muted-foreground">
               <Calendar className="h-4 w-4" />
-              {formatDate(article.publishedAt)}
+              {formatDate(article.publishedAt ?? article.createdAt)}
             </span>
             <span className="flex items-center gap-1 text-sm text-muted-foreground">
               <UserRound className="h-4 w-4" />
-              {detail.author}
+              {articleAuthor}
             </span>
           </div>
 
@@ -157,7 +167,7 @@ export default async function ArticleDetailPage({ params }: Props) {
           </p>
 
           <MediaImage
-            src={getNewsImage(slug)}
+            src={getArticleImage(article)}
             alt={article.title}
             priority
             containerClassName="mt-10 aspect-[16/9] rounded-3xl shadow-card"
@@ -167,7 +177,7 @@ export default async function ArticleDetailPage({ params }: Props) {
           <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_280px]">
             <div className="prose prose-lg max-w-none">
               <p className="lead">{article.excerpt}</p>
-              {detail.body.map((paragraph) => (
+              {articleParagraphs.map((paragraph) => (
                 <p key={paragraph}>{paragraph}</p>
               ))}
             </div>
@@ -176,10 +186,10 @@ export default async function ArticleDetailPage({ params }: Props) {
               <div className="rounded-3xl border border-line bg-white p-6 shadow-soft">
                 <p className="kicker text-muted-foreground">Lecture</p>
                 <p className="mt-4 font-display text-2xl font-bold text-encre">
-                  {detail.readingTime}
+                  {getReadingTime(article.content)}
                 </p>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  Article publié par {detail.author.toLowerCase()}.
+                  Article publié par {articleAuthor.toLowerCase()}.
                 </p>
               </div>
 
@@ -228,46 +238,57 @@ export default async function ArticleDetailPage({ params }: Props) {
             </Button>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2">
-            {relatedArticles.map((relatedArticle) => (
-              <Card
-                key={relatedArticle.id}
-                className="group overflow-hidden rounded-3xl transition-shadow hover:shadow-card"
-              >
-                <Link href={`/actualites/${relatedArticle.slug}`}>
-                  <MediaImage
-                    src={getNewsImage(relatedArticle.slug)}
-                    alt={relatedArticle.title}
-                    containerClassName="aspect-[16/10]"
-                  />
-                </Link>
-                <CardHeader>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Badge variant="accent">{relatedArticle.category}</Badge>
-                    <span className="text-xs text-muted-foreground">
-                      {formatDate(relatedArticle.publishedAt)}
-                    </span>
-                  </div>
+          {relatedArticles.length > 0 ? (
+            <div className="grid gap-6 md:grid-cols-2">
+              {relatedArticles.map((relatedArticle) => (
+                <Card
+                  key={relatedArticle.id}
+                  className="group overflow-hidden rounded-3xl transition-shadow hover:shadow-card"
+                >
                   <Link href={`/actualites/${relatedArticle.slug}`}>
-                    <h3 className="mt-3 font-display text-2xl font-bold leading-tight text-encre transition-colors group-hover:text-primary">
-                      {relatedArticle.title}
-                    </h3>
+                    <MediaImage
+                      src={getArticleImage(relatedArticle)}
+                      alt={relatedArticle.title}
+                      containerClassName="aspect-[16/10]"
+                    />
                   </Link>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm leading-6 text-muted-foreground">
-                    {relatedArticle.excerpt}
-                  </p>
-                  <Button variant="ghost" size="sm" asChild className="mt-5">
+                  <CardHeader>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Badge variant="accent">{relatedArticle.category}</Badge>
+                      <span className="text-xs text-muted-foreground">
+                        {formatDate(relatedArticle.publishedAt ?? relatedArticle.createdAt)}
+                      </span>
+                    </div>
                     <Link href={`/actualites/${relatedArticle.slug}`}>
-                      Lire l&apos;article
-                      <ArrowRight className="h-4 w-4" />
+                      <h3 className="mt-3 font-display text-2xl font-bold leading-tight text-encre transition-colors group-hover:text-primary">
+                        {relatedArticle.title}
+                      </h3>
                     </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm leading-6 text-muted-foreground">
+                      {relatedArticle.excerpt}
+                    </p>
+                    <Button variant="ghost" size="sm" asChild className="mt-5">
+                      <Link href={`/actualites/${relatedArticle.slug}`}>
+                        Lire l&apos;article
+                        <ArrowRight className="h-4 w-4" />
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-3xl border border-dashed border-line bg-white p-8 text-center">
+              <p className="font-display text-2xl font-bold text-encre">
+                Aucun autre article disponible.
+              </p>
+              <p className="mt-3 text-sm text-muted-foreground">
+                Les prochaines nouvelles seront ajoutées dès leur publication.
+              </p>
+            </div>
+          )}
         </section>
       </div>
     </article>
