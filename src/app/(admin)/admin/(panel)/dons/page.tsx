@@ -11,6 +11,7 @@ import type { DonationStatus } from "@prisma/client";
 type DonationSearchParams = Promise<{
   q?: string;
   status?: string;
+  page?: string;
 }>;
 
 function getStatusVariant(status: string) {
@@ -28,6 +29,8 @@ export default async function AdminDonationsPage(props: {
   const params = await props.searchParams;
   const query = params.q?.trim() ?? "";
   const status = params.status?.trim() ?? "ALL";
+  const currentPage = Math.max(1, Number(params.page ?? "1") || 1);
+  const perPage = 20;
   const normalizedStatus =
     status === "COMPLETED" ||
     status === "PENDING" ||
@@ -42,6 +45,8 @@ export default async function AdminDonationsPage(props: {
     completedAmount: 0,
     pendingCount: 0,
     completedCount: 0,
+    filteredTotal: 0,
+    monthlyAmount: 0,
   };
 
   try {
@@ -57,7 +62,18 @@ export default async function AdminDonationsPage(props: {
         : {}),
     };
 
-    const [allStats, pendingCount, completedCount, filteredDonations] =
+    const monthStart = new Date();
+    monthStart.setDate(1);
+    monthStart.setHours(0, 0, 0, 0);
+
+    const [
+      allStats,
+      pendingCount,
+      completedCount,
+      monthStats,
+      filteredTotal,
+      filteredDonations,
+    ] =
       await Promise.all([
         prisma.donation.aggregate({
           _count: { id: true },
@@ -66,9 +82,19 @@ export default async function AdminDonationsPage(props: {
         }),
         prisma.donation.count({ where: { status: "PENDING" } }),
         prisma.donation.count({ where: { status: "COMPLETED" } }),
+        prisma.donation.aggregate({
+          where: {
+            status: "COMPLETED",
+            createdAt: { gte: monthStart },
+          },
+          _sum: { amount: true },
+        }),
+        prisma.donation.count({ where }),
         prisma.donation.findMany({
           where,
           orderBy: { createdAt: "desc" },
+          skip: (currentPage - 1) * perPage,
+          take: perPage,
         }),
       ]);
 
@@ -78,10 +104,14 @@ export default async function AdminDonationsPage(props: {
       completedAmount: allStats._sum.amount ?? 0,
       pendingCount,
       completedCount,
+      filteredTotal,
+      monthlyAmount: monthStats._sum.amount ?? 0,
     };
   } catch {
     // Database unavailable: page still renders.
   }
+
+  const totalPages = Math.max(1, Math.ceil(stats.filteredTotal / perPage));
 
   return (
     <div className="space-y-8">
@@ -97,7 +127,7 @@ export default async function AdminDonationsPage(props: {
         </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">
@@ -123,6 +153,18 @@ export default async function AdminDonationsPage(props: {
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm text-muted-foreground">
+              Dons ce mois
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-3xl font-bold">
+              {formatCurrency(stats.monthlyAmount)}
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-muted-foreground">
               Dons en attente
             </CardTitle>
           </CardHeader>
@@ -134,7 +176,11 @@ export default async function AdminDonationsPage(props: {
 
       <Card>
         <CardContent className="pt-6">
-          <form className="grid gap-4 md:grid-cols-[1fr_220px_auto]">
+          <form
+            method="get"
+            action="/admin/dons"
+            className="grid gap-4 md:grid-cols-[1fr_220px_auto]"
+          >
             <Input
               name="q"
               defaultValue={query}
@@ -187,6 +233,47 @@ export default async function AdminDonationsPage(props: {
               </CardHeader>
             </Card>
           ))}
+
+          <div className="flex flex-col gap-3 border-t border-line pt-4 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+            <p>
+              Page {currentPage} sur {totalPages} · {stats.filteredTotal} don
+              {stats.filteredTotal > 1 ? "s" : ""} correspondant au filtre
+            </p>
+            <div className="flex gap-2">
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                disabled={currentPage <= 1}
+              >
+                <Link
+                  href={`/admin/dons?${new URLSearchParams({
+                    ...(query ? { q: query } : {}),
+                    ...(status !== "ALL" ? { status } : {}),
+                    page: String(Math.max(1, currentPage - 1)),
+                  }).toString()}`}
+                >
+                  Précédent
+                </Link>
+              </Button>
+              <Button
+                asChild
+                variant="outline"
+                size="sm"
+                disabled={currentPage >= totalPages}
+              >
+                <Link
+                  href={`/admin/dons?${new URLSearchParams({
+                    ...(query ? { q: query } : {}),
+                    ...(status !== "ALL" ? { status } : {}),
+                    page: String(Math.min(totalPages, currentPage + 1)),
+                  }).toString()}`}
+                >
+                  Suivant
+                </Link>
+              </Button>
+            </div>
+          </div>
         </div>
       )}
     </div>

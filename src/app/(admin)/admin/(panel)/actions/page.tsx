@@ -1,4 +1,5 @@
 import { revalidatePath } from "next/cache";
+import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,6 +37,8 @@ export default async function AdminActionsPage() {
     });
 
     revalidatePath("/admin/actions");
+    revalidatePath("/nos-actions");
+    revalidatePath(`/nos-actions/${slugify(rawSlug || title)}`);
   }
 
   async function toggleAction(formData: FormData) {
@@ -53,6 +56,45 @@ export default async function AdminActionsPage() {
     });
 
     revalidatePath("/admin/actions");
+    revalidatePath("/nos-actions");
+    revalidatePath(`/nos-actions/${current.slug}`);
+  }
+
+  async function updateAction(formData: FormData) {
+    "use server";
+    await requireAdminSession();
+
+    const id = formData.get("id")?.toString().trim() ?? "";
+    const title = formData.get("title")?.toString().trim() ?? "";
+    const summary = formData.get("summary")?.toString().trim() ?? "";
+    const content = formData.get("content")?.toString().trim() ?? "";
+    const category = formData.get("category")?.toString().trim() ?? "Action";
+    const imageUrl = formData.get("imageUrl")?.toString().trim() || null;
+    const rawSlug = formData.get("slug")?.toString().trim() ?? "";
+
+    if (!id || !title || !summary || !content) return;
+
+    const current = await prisma.action.findUnique({ where: { id } });
+    if (!current) return;
+
+    const nextSlug = slugify(rawSlug || title);
+
+    await prisma.action.update({
+      where: { id },
+      data: {
+        title,
+        slug: nextSlug,
+        summary,
+        content,
+        category,
+        imageUrl,
+      },
+    });
+
+    revalidatePath("/admin/actions");
+    revalidatePath("/nos-actions");
+    revalidatePath(`/nos-actions/${current.slug}`);
+    revalidatePath(`/nos-actions/${nextSlug}`);
   }
 
   async function deleteAction(formData: FormData) {
@@ -61,8 +103,13 @@ export default async function AdminActionsPage() {
     const id = formData.get("id")?.toString();
     if (!id) return;
 
+    const current = await prisma.action.findUnique({ where: { id } });
     await prisma.action.delete({ where: { id } });
     revalidatePath("/admin/actions");
+    revalidatePath("/nos-actions");
+    if (current) {
+      revalidatePath(`/nos-actions/${current.slug}`);
+    }
   }
 
   let actions: Awaited<ReturnType<typeof prisma.action.findMany>> = [];
@@ -171,6 +218,11 @@ export default async function AdminActionsPage() {
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
+                  <Button asChild variant="outline" size="sm">
+                    <Link href={`/nos-actions/${action.slug}`} target="_blank">
+                      Voir sur le site
+                    </Link>
+                  </Button>
                   <form action={toggleAction}>
                     <input type="hidden" name="id" value={action.id} />
                     <Button type="submit" variant="outline" size="sm">
@@ -185,6 +237,40 @@ export default async function AdminActionsPage() {
                   </form>
                 </div>
               </CardHeader>
+              <CardContent className="pt-0">
+                <form action={updateAction} className="grid gap-4 rounded-2xl border border-line bg-muted/20 p-4">
+                  <input type="hidden" name="id" value={action.id} />
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <Input name="title" defaultValue={action.title} placeholder="Titre" required />
+                    <Input name="slug" defaultValue={action.slug} placeholder="Slug" />
+                  </div>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <Input name="category" defaultValue={action.category} placeholder="Catégorie" />
+                    <Input
+                      name="imageUrl"
+                      defaultValue={action.imageUrl ?? ""}
+                      placeholder="URL de l’image"
+                    />
+                  </div>
+                  <Textarea
+                    name="summary"
+                    defaultValue={action.summary}
+                    placeholder="Résumé court"
+                    className="min-h-[90px]"
+                    required
+                  />
+                  <Textarea
+                    name="content"
+                    defaultValue={action.content}
+                    placeholder="Contenu complet"
+                    className="min-h-[180px]"
+                    required
+                  />
+                  <div className="flex justify-end">
+                    <Button type="submit">Mettre à jour</Button>
+                  </div>
+                </form>
+              </CardContent>
             </Card>
           ))
         )}

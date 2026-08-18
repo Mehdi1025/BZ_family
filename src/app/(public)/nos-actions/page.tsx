@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FadeUp, SectionIntro } from "@/components/shared/FadeUp";
 import { MediaImage } from "@/components/shared/MediaImage";
-import { actionDetails } from "@/lib/data/ramzi-pages";
+import prisma from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Nos actions solidaires",
@@ -13,7 +13,18 @@ export const metadata: Metadata = {
     "Découvrez les actions de BZ Family : aide alimentaire, accompagnement scolaire et lien social au service des familles du quartier.",
 };
 
-export default function ActionsPage() {
+export default async function ActionsPage() {
+  let actions: Awaited<ReturnType<typeof prisma.action.findMany>> = [];
+
+  try {
+    actions = await prisma.action.findMany({
+      where: { isActive: true },
+      orderBy: { createdAt: "desc" },
+    });
+  } catch {
+    actions = [];
+  }
+
   return (
     <>
       <section className="relative overflow-hidden bg-encre text-white">
@@ -29,37 +40,45 @@ export default function ActionsPage() {
       </section>
 
       <section className="section-padding bg-white">
-        <div className="container-bz grid gap-8 lg:grid-cols-3">
-          {actionDetails.map((action, index) => (
-            <FadeUp key={action.slug} delay={index * 0.1}>
-              <Link
-                href={`/nos-actions/${action.slug}`}
-                className="group block h-full overflow-hidden rounded-[2rem] border border-line bg-white shadow-card transition-all hover:-translate-y-1 hover:shadow-lift"
-              >
-                <MediaImage
-                  src={action.image}
-                  alt={action.title}
-                  containerClassName="aspect-[4/3]"
-                />
-                <div className="p-7">
-                  <Badge variant="accent">{action.label}</Badge>
-                  <h2 className="mt-5 font-display text-3xl font-bold text-encre">
-                    {action.title}
-                  </h2>
-                  <p className="mt-4 leading-relaxed text-muted-foreground">
-                    {action.summary}
-                  </p>
-                  <div className="mt-6 rounded-xl bg-papier p-4 text-sm font-semibold text-primary">
-                    {action.metric}
-                  </div>
-                  <span className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-primary">
-                    Lire la fiche action
-                    <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-                  </span>
-                </div>
-              </Link>
-            </FadeUp>
-          ))}
+        <div className="container-bz">
+          {actions.length === 0 ? (
+            <div className="rounded-[2rem] border border-dashed border-line bg-papier p-10 text-center text-muted-foreground">
+              Aucune action publiée pour le moment.
+            </div>
+          ) : (
+            <div className="grid gap-8 lg:grid-cols-3">
+              {actions.map((action, index) => (
+                <FadeUp key={action.slug} delay={index * 0.1}>
+                  <Link
+                    href={`/nos-actions/${action.slug}`}
+                    className="group block h-full overflow-hidden rounded-[2rem] border border-line bg-white shadow-card transition-all hover:-translate-y-1 hover:shadow-lift"
+                  >
+                    <MediaImage
+                      src={action.imageUrl ?? "/images/gallery/2.jpg"}
+                      alt={action.title}
+                      containerClassName="aspect-[4/3]"
+                    />
+                    <div className="p-7">
+                      <Badge variant="accent">{action.category}</Badge>
+                      <h2 className="mt-5 font-display text-3xl font-bold text-encre">
+                        {action.title}
+                      </h2>
+                      <p className="mt-4 leading-relaxed text-muted-foreground">
+                        {action.summary}
+                      </p>
+                      <div className="mt-6 rounded-xl bg-papier p-4 text-sm font-semibold text-primary">
+                        Action publiée et visible sur le site
+                      </div>
+                      <span className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-primary">
+                        Lire la fiche action
+                        <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                      </span>
+                    </div>
+                  </Link>
+                </FadeUp>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
