@@ -4,6 +4,7 @@ import { requireAdminSession } from "@/lib/admin";
 import {
   Calendar,
   ClipboardList,
+  Handshake,
   Heart,
   ImageIcon,
   LayoutDashboard,
@@ -23,6 +24,7 @@ const navItems = [
   { href: "/admin/evenements", label: "Événements", icon: Calendar },
   { href: "/admin/benevoles", label: "Bénévoles", icon: Users },
   { href: "/admin/actualites", label: "Actualités", icon: Newspaper },
+  { href: "/admin/partenaires", label: "Partenaires", icon: Handshake },
   { href: "/admin/dons", label: "Dons", icon: Heart },
 ];
 

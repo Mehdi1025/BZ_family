@@ -46,6 +46,63 @@ const defaultActions = [
   },
 ];
 
+const defaultPartners = [
+  {
+    id: "partner-mairie-paris",
+    name: "Mairie de Paris",
+    logoUrl: "/images/partners/mairie-paris.png",
+    websiteUrl: "https://www.paris.fr",
+    type: "INSTITUTIONAL" as const,
+    description:
+      "Soutien institutionnel aux initiatives de proximité et aux actions locales portées par les associations de quartier.",
+  },
+  {
+    id: "partner-croix-rouge",
+    name: "Croix-Rouge française",
+    logoUrl: "/images/partners/croix-rouge.jpg",
+    websiteUrl: "https://www.croix-rouge.fr",
+    type: "COMMUNITY" as const,
+    description:
+      "Partenaire associatif engagé dans l'aide aux personnes, la solidarité de terrain et l'accompagnement des publics fragiles.",
+  },
+  {
+    id: "partner-secours-populaire",
+    name: "Secours populaire français",
+    logoUrl: "/images/partners/secours-populaire.png",
+    websiteUrl: "https://www.secourspopulaire.fr",
+    type: "COMMUNITY" as const,
+    description:
+      "Réseau solidaire mobilisé autour de la lutte contre la précarité et de l'accès aux ressources essentielles.",
+  },
+  {
+    id: "partner-banque-alimentaire",
+    name: "Banque Alimentaire",
+    logoUrl: "/images/partners/banque-alimentaire.png",
+    websiteUrl: "https://www.banquealimentaire.org",
+    type: "COMMUNITY" as const,
+    description:
+      "Appui aux actions alimentaires, aux collectes et à la redistribution de denrées auprès des habitants accompagnés.",
+  },
+  {
+    id: "partner-france-benevolat",
+    name: "France Bénévolat",
+    logoUrl: "/images/partners/france-benevolat.png",
+    websiteUrl: "https://www.francebenevolat.org",
+    type: "COMMUNITY" as const,
+    description:
+      "Réseau de mobilisation bénévole qui facilite l'engagement citoyen et la rencontre entre associations et volontaires.",
+  },
+  {
+    id: "partner-fondation-de-france",
+    name: "Fondation de France",
+    logoUrl: "/images/partners/fondation-de-france.jpg",
+    websiteUrl: "https://www.fondationdefrance.org",
+    type: "CORPORATE" as const,
+    description:
+      "Soutien mécène aux projets d'intérêt général et aux initiatives sociales qui renforcent l'impact local.",
+  },
+];
+
 async function main() {
   const passwordHash = await bcrypt.hash("admin123", 12);
 
@@ -72,7 +129,12 @@ async function main() {
     skipDuplicates: true,
   });
 
-  console.log("Seed completed — admin@bzfamily.org / admin123 + 3 actions");
+  await prisma.partner.createMany({
+    data: defaultPartners,
+    skipDuplicates: true,
+  });
+
+  console.log("Seed completed — admin@bzfamily.org / admin123 + 3 actions + 6 partners");
 }
 
 main()
