@@ -49,6 +49,33 @@ export default async function AdminGalleryPage() {
     revalidatePath("/galerie");
   }
 
+  async function updateMedia(formData: FormData) {
+    "use server";
+    await requireAdminSession();
+
+    const id = formData.get("id")?.toString().trim() ?? "";
+    const albumTitle = formData.get("albumTitle")?.toString().trim() ?? "";
+    const mediaUrl = formData.get("mediaUrl")?.toString().trim() ?? "";
+    const category = formData.get("category")?.toString().trim() ?? "";
+    const type =
+      formData.get("type")?.toString().trim() === "VIDEO" ? "VIDEO" : "IMAGE";
+
+    if (!id || !albumTitle || !mediaUrl || !category) return;
+
+    await prisma.galleryMedia.update({
+      where: { id },
+      data: {
+        albumTitle,
+        mediaUrl,
+        category,
+        type,
+      },
+    });
+
+    revalidatePath("/admin/galerie");
+    revalidatePath("/galerie");
+  }
+
   async function importDemoGallery() {
     "use server";
     await requireAdminSession();
@@ -90,7 +117,7 @@ export default async function AdminGalleryPage() {
       <div>
         <h1 className="text-3xl font-bold">Galerie</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Ajout et suppression des médias affichés dans la galerie publique.
+          Ajout, modification et suppression des médias affichés dans la galerie publique.
         </p>
       </div>
 
@@ -195,12 +222,48 @@ export default async function AdminGalleryPage() {
                 <p className="text-xs text-muted-foreground">
                   Ajouté le {formatDate(item.createdAt)}
                 </p>
-                <form action={deleteMedia}>
-                  <input type="hidden" name="id" value={item.id} />
-                  <Button type="submit" variant="secondary" size="sm">
-                    Supprimer
-                  </Button>
-                </form>
+                <div className="space-y-3 rounded-2xl border border-line bg-muted/20 p-4">
+                  <form action={updateMedia} className="grid gap-3">
+                    <input type="hidden" name="id" value={item.id} />
+                    <Input
+                      name="albumTitle"
+                      defaultValue={item.albumTitle}
+                      placeholder="Titre"
+                      required
+                    />
+                    <Input
+                      name="category"
+                      defaultValue={item.category}
+                      placeholder="Catégorie"
+                      required
+                    />
+                    <Input
+                      name="mediaUrl"
+                      defaultValue={item.mediaUrl}
+                      placeholder="URL du média"
+                      required
+                    />
+                    <select
+                      name="type"
+                      className="h-11 rounded-lg border border-line bg-white px-4 text-sm"
+                      defaultValue={item.type}
+                    >
+                      <option value="IMAGE">IMAGE</option>
+                      <option value="VIDEO">VIDEO</option>
+                    </select>
+                    <div>
+                      <Button type="submit" size="sm">
+                        Enregistrer les modifications
+                      </Button>
+                    </div>
+                  </form>
+                  <form action={deleteMedia}>
+                    <input type="hidden" name="id" value={item.id} />
+                    <Button type="submit" variant="secondary" size="sm">
+                      Supprimer
+                    </Button>
+                  </form>
+                </div>
               </CardContent>
             </Card>
           ))

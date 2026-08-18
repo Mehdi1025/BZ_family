@@ -248,7 +248,7 @@ export default async function AdminNewsPage() {
               Publier maintenant
             </label>
             <div>
-              <Button type="submit">Enregistrer l'actualité</Button>
+              <Button type="submit">Enregistrer l&apos;actualité</Button>
             </div>
           </form>
         </CardContent>
