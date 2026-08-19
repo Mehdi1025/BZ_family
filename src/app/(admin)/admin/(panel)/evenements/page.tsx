@@ -1,4 +1,4 @@
-import type { Event } from "@prisma/client";
+import type { Event, Registration } from "@prisma/client";
 import Image from "next/image";
 import { revalidatePath } from "next/cache";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +11,8 @@ import { requireAdminSession } from "@/lib/admin";
 import { formatDate, slugify } from "@/lib/utils";
 import { getEventImage } from "@/lib/data/images";
 
-type EventWithCount = Event & {
+type EventWithRegistrations = Event & {
+  registrations: Registration[];
   _count: {
     registrations: number;
   };
@@ -19,6 +20,13 @@ type EventWithCount = Event & {
 
 function getDateInputValue(date: Date) {
   return date.toISOString().slice(0, 10);
+}
+
+function getRegistrationStatusLabel(status: Registration["status"]) {
+  if (status === "CONFIRMED") return "Confirmée";
+  if (status === "CANCELLED") return "Annulée";
+
+  return "En attente";
 }
 
 function parseCapacity(value: FormDataEntryValue | null) {
@@ -161,12 +169,17 @@ export default async function AdminEventsPage() {
     revalidatePath(`/evenements/${currentEvent.slug}`);
   }
 
-  let events: EventWithCount[] = [];
+  let events: EventWithRegistrations[] = [];
 
   try {
     events = await prisma.event.findMany({
       orderBy: { date: "asc" },
-      include: { _count: { select: { registrations: true } } },
+      include: {
+        registrations: {
+          orderBy: { createdAt: "desc" },
+        },
+        _count: { select: { registrations: true } },
+      },
     });
   } catch {
     // DB not connected
@@ -335,6 +348,58 @@ export default async function AdminEventsPage() {
                     Slug : {event.slug} · Inscriptions enregistrées :{" "}
                     {event._count.registrations}
                   </p>
+
+                  <details className="mt-6 rounded-2xl border border-line bg-surface-muted/30 p-4">
+                    <summary className="w-fit cursor-pointer list-none rounded-lg border border-line bg-white px-4 py-2 text-sm font-semibold text-encre shadow-sm transition hover:bg-surface-muted [&::-webkit-details-marker]:hidden">
+                      Voir les inscriptions ({event._count.registrations})
+                    </summary>
+
+                    {event.registrations.length === 0 ? (
+                      <div className="mt-5 rounded-2xl border border-dashed border-line bg-white p-5 text-center text-sm text-muted-foreground">
+                        Aucun participant inscrit pour cet événement.
+                      </div>
+                    ) : (
+                      <div className="mt-5 grid gap-3">
+                        {event.registrations.map((registration) => (
+                          <div
+                            key={registration.id}
+                            className="rounded-2xl border border-line bg-white p-4"
+                          >
+                            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                              <div>
+                                <p className="font-semibold text-encre">
+                                  {registration.firstName}{" "}
+                                  {registration.lastName}
+                                </p>
+                                <p className="mt-1 text-sm text-muted-foreground">
+                                  {registration.email}
+                                </p>
+                                <p className="mt-1 text-sm text-muted-foreground">
+                                  {registration.phone}
+                                </p>
+                              </div>
+                              <div className="flex flex-col gap-2 sm:items-end">
+                                <Badge
+                                  variant={
+                                    registration.status === "CONFIRMED"
+                                      ? "default"
+                                      : "outline"
+                                  }
+                                >
+                                  {getRegistrationStatusLabel(
+                                    registration.status
+                                  )}
+                                </Badge>
+                                <p className="text-xs text-muted-foreground">
+                                  Inscrit le {formatDate(registration.createdAt)}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </details>
 
                   <details className="mt-6 rounded-2xl border border-line bg-surface-muted/30 p-4">
                     <summary className="w-fit cursor-pointer list-none rounded-lg border border-line bg-white px-4 py-2 text-sm font-semibold text-encre shadow-sm transition hover:bg-surface-muted [&::-webkit-details-marker]:hidden">

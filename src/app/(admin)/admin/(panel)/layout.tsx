@@ -9,6 +9,7 @@ import {
   ImageIcon,
   LayoutDashboard,
   LogOut,
+  Mail,
   Newspaper,
   Users,
 } from "lucide-react";
@@ -25,6 +26,7 @@ const navItems = [
   { href: "/admin/benevoles", label: "Bénévoles", icon: Users },
   { href: "/admin/actualites", label: "Actualités", icon: Newspaper },
   { href: "/admin/partenaires", label: "Partenaires", icon: Handshake },
+  { href: "/admin/contact", label: "Messages", icon: Mail },
   { href: "/admin/dons", label: "Dons", icon: Heart },
 ];
 

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { SectionIntro } from "@/components/shared/FadeUp";
 import { siteConfig } from "@/lib/utils";
 
@@ -8,30 +9,51 @@ export const metadata: Metadata = {
     "Mentions légales du site BZ Family : éditeur, hébergement, responsabilité et propriété intellectuelle.",
 };
 
-const items = [
+const editorRows = [
+  ["Nom du site", siteConfig.name],
+  ["Éditeur", "Association BZ Family"],
+  ["Forme juridique", "Association loi 1901"],
+  ["Adresse du siège", siteConfig.address],
+  ["E-mail", siteConfig.email],
+  ["Téléphone", siteConfig.phone],
+  ["Numéro RNA", "À compléter"],
+  ["Numéro SIRET", "À compléter"],
+  ["Directeur de la publication", "À compléter"],
+] as const;
+
+const sections = [
   {
-    title: "Éditeur du site",
-    text: "Le site est édité par l'association BZ Family. Les informations présentées ont pour objectif de faire connaître les actions de l'association, ses événements, ses actualités et ses moyens de contact.",
-  },
-  {
-    title: "Association",
-    text: `BZ Family est une association loi 1901. Pour toute demande, vous pouvez écrire à ${siteConfig.email} ou utiliser les coordonnées affichées sur le site.`,
+    title: "Objet du site",
+    text: "Le site présente les actions de BZ Family, ses événements, ses actualités, ses partenaires, ses formulaires de contact, de bénévolat et de don. Les informations publiées sont destinées aux habitants, bénévoles, partenaires et donateurs souhaitant suivre ou soutenir les actions de l'association.",
   },
   {
     title: "Hébergement",
-    text: "L'hébergement technique du site peut être assuré par un prestataire externe choisi par l'association ou son équipe technique. Les informations précises seront complétées lors de la mise en production définitive.",
+    text: "Le site est destiné à être hébergé par un prestataire technique choisi pour la mise en production. Les informations exactes de l'hébergeur seront complétées avant la mise en ligne officielle.",
+    details: [
+      ["Hébergeur", "À compléter"],
+      ["Adresse de l'hébergeur", "À compléter"],
+      ["Site web de l'hébergeur", "À compléter"],
+    ],
   },
   {
     title: "Propriété intellectuelle",
-    text: "Les textes, visuels, logos et contenus publiés sur ce site sont protégés. Sauf mention contraire, ils ne peuvent pas être reproduits ou réutilisés sans autorisation préalable de l'association.",
+    text: "Les textes, images, logos, documents, éléments graphiques et contenus publiés sur ce site sont protégés. Sauf mention contraire, toute reproduction, diffusion ou réutilisation doit faire l'objet d'une autorisation préalable de BZ Family ou des ayants droit concernés.",
   },
   {
     title: "Responsabilité",
-    text: "BZ Family s'efforce de fournir des informations à jour et fiables. Toutefois, l'association ne peut garantir l'absence totale d'erreur ou d'omission et se réserve le droit de modifier les contenus à tout moment.",
+    text: "BZ Family s'efforce de proposer des informations exactes et à jour. L'association ne peut toutefois garantir l'absence totale d'erreur, d'omission ou d'indisponibilité temporaire du site. Les contenus peuvent être modifiés à tout moment afin de refléter l'évolution des actions associatives.",
   },
   {
-    title: "Contact",
-    text: `Pour toute question liée au site ou à l'association, vous pouvez écrire à ${siteConfig.email} ou contacter l'équipe via la page Contact.`,
+    title: "Données personnelles",
+    text: "Les informations transmises via les formulaires du site sont utilisées uniquement pour traiter les demandes concernées : contact, bénévolat, inscription à un événement ou don. Pour plus de détails, consultez la politique de confidentialité.",
+    link: {
+      href: "/politique-confidentialite",
+      label: "Consulter la politique de confidentialité",
+    },
+  },
+  {
+    title: "Contact légal",
+    text: `Pour toute question concernant le site, les contenus publiés ou les informations légales, vous pouvez contacter BZ Family à l'adresse ${siteConfig.email}.`,
   },
 ];
 
@@ -51,13 +73,64 @@ export default function LegalNoticePage() {
       </section>
 
       <section className="section-padding bg-white">
-        <div className="container-bz max-w-4xl space-y-6">
-          {items.map((item) => (
-            <article key={item.title} className="rounded-2xl border border-line p-7">
-              <h2 className="font-display text-2xl font-bold text-encre">{item.title}</h2>
-              <p className="mt-4 leading-relaxed text-muted-foreground">{item.text}</p>
+        <div className="container-bz max-w-5xl">
+          <div className="mb-8 rounded-2xl bg-papier p-6 text-sm leading-relaxed text-muted-foreground">
+            Les informations indiquées comme{" "}
+            <span className="font-semibold text-encre">À compléter</span> devront
+            être renseignées avec les données officielles de l&apos;association
+            avant la mise en production.
+          </div>
+
+          <article className="rounded-2xl border border-line p-7">
+            <h2 className="font-display text-2xl font-bold text-encre">
+              Éditeur du site
+            </h2>
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              {editorRows.map(([label, value]) => (
+                <div key={label} className="rounded-xl bg-papier p-4">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    {label}
+                  </p>
+                  <p className="mt-2 font-medium text-encre">{value}</p>
+                </div>
+              ))}
+            </div>
+          </article>
+
+          <div className="mt-6 space-y-6">
+            {sections.map((section) => (
+              <article key={section.title} className="rounded-2xl border border-line p-7">
+                <h2 className="font-display text-2xl font-bold text-encre">
+                  {section.title}
+                </h2>
+                <p className="mt-4 leading-relaxed text-muted-foreground">
+                  {section.text}
+                </p>
+
+                {section.details ? (
+                  <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                    {section.details.map(([label, value]) => (
+                      <div key={label} className="rounded-xl bg-papier p-4">
+                        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                          {label}
+                        </p>
+                        <p className="mt-2 font-medium text-encre">{value}</p>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+
+                {section.link ? (
+                  <Link
+                    href={section.link.href}
+                    className="mt-5 inline-flex rounded-full border border-line px-5 py-2 text-sm font-semibold text-encre transition-colors hover:border-encre hover:bg-encre hover:text-white"
+                  >
+                    {section.link.label}
+                  </Link>
+                ) : null}
             </article>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
     </>

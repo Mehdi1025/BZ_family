@@ -224,7 +224,8 @@ export default async function EventDetailPage({ params }: Props) {
   const isPast = event.date < new Date();
   const imageUrl = event.imageUrl ?? getEventImage(slug);
   const editorialDetails = eventEditorialDetails[event.slug];
-  const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(siteConfig.address)}&output=embed`;
+  const mapAddress = event.location || siteConfig.address;
+  const mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapAddress)}&output=embed`;
 
   return (
     <article className="pb-24 pt-10 lg:pb-32 lg:pt-14 xl:pb-40">
@@ -351,8 +352,8 @@ export default async function EventDetailPage({ params }: Props) {
                   Localisation
                 </h2>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  Retrouvez l&apos;adresse de l&apos;association et préparez
-                  votre trajet avant l&apos;événement.
+                  Retrouvez le lieu de l&apos;événement et préparez votre
+                  trajet avant votre venue.
                 </p>
               </div>
               <iframe
