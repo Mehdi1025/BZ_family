@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { Partner, PartnerType } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ExternalLink, Handshake, Network, Quote } from "lucide-react";
@@ -6,7 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { FadeUp, SectionIntro } from "@/components/shared/FadeUp";
-import { partnerTestimonials, partners } from "@/lib/data/mock";
+import { partnerTestimonials } from "@/lib/data/mock";
+import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
 
 const partnershipLevels = [
   {
@@ -26,13 +30,76 @@ const partnershipLevels = [
   },
 ] as const;
 
+const partnerTypeLabels: Record<PartnerType, string> = {
+  INSTITUTIONAL: "Partenaire institutionnel",
+  CORPORATE: "Entreprise partenaire",
+  COMMUNITY: "Association partenaire",
+  MEDIA: "Partenaire média",
+};
+
+const partnerTypeOrder: PartnerType[] = [
+  "INSTITUTIONAL",
+  "COMMUNITY",
+  "CORPORATE",
+  "MEDIA",
+];
+
 export const metadata: Metadata = {
   title: "Partenaires",
   description: "Découvrez les partenaires qui soutiennent BZ Family.",
 };
 
-export default function PartnersPage() {
+async function getPartners() {
+  try {
+    return await prisma.partner.findMany({
+      orderBy: [{ type: "asc" }, { name: "asc" }],
+    });
+  } catch (error) {
+    console.error("Unable to load partners", error);
+
+    return [];
+  }
+}
+
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word[0])
+    .join("")
+    .toUpperCase();
+}
+
+function PartnerLogo({ partner }: { partner: Partner }) {
+  if (!partner.logoUrl) {
+    return (
+      <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white text-xl font-bold text-primary shadow-sm">
+        {getInitials(partner.name)}
+      </div>
+    );
+  }
+
+  return (
+    <Image
+      src={partner.logoUrl}
+      alt={`Logo ${partner.name}`}
+      width={220}
+      height={110}
+      className="max-h-16 w-auto object-contain"
+    />
+  );
+}
+
+export default async function PartnersPage() {
+  const partners = await getPartners();
   const featuredTestimonial = partnerTestimonials[0];
+  const partnersByType = partnerTypeOrder
+    .map((type) => ({
+      type,
+      partners: partners.filter((partner) => partner.type === type),
+    }))
+    .filter((group) => group.partners.length > 0);
 
   return (
     <>
@@ -90,10 +157,16 @@ export default function PartnersPage() {
                       {partner.name}
                     </span>
                     <span className="rounded-full bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-white/55">
-                      Partenaire
+                      {partnerTypeLabels[partner.type]}
                     </span>
                   </div>
                 ))}
+
+                {partners.length === 0 ? (
+                  <div className="rounded-2xl border border-white/10 bg-white/10 px-4 py-5 text-sm text-white/65">
+                    Aucun partenaire n&apos;est publié pour le moment.
+                  </div>
+                ) : null}
               </div>
 
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -122,42 +195,77 @@ export default function PartnersPage() {
       </section>
 
       <section id="liste-partenaires" className="pb-12 pt-24 lg:pb-16 lg:pt-32 xl:pt-40">
-        <div className="container-bz grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {partners.map((partner) => (
-            <Card
-              key={partner.id}
-              className="group overflow-hidden rounded-[2rem] transition-all hover:-translate-y-1 hover:shadow-card"
-            >
-              <CardHeader>
-                <div className="flex h-28 items-center justify-center rounded-2xl bg-papier-deep p-6">
-                  <Image
-                    src={partner.logoUrl}
-                    alt={`Logo ${partner.name}`}
-                    width={220}
-                    height={110}
-                    className="max-h-16 w-auto object-contain"
-                  />
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-5">
-                <div>
-                  <Badge variant="secondary">{partner.tier}</Badge>
-                  <h2 className="mt-4 font-display text-2xl font-bold text-encre">
-                    {partner.name}
+        <div className="container-bz space-y-10">
+          {partnersByType.length > 0 ? (
+            partnersByType.map((group) => (
+              <div key={group.type} className="space-y-5">
+                <div className="flex items-center gap-3">
+                  <span className="h-px w-10 bg-primary/35" />
+                  <h2 className="text-xs font-bold uppercase tracking-[0.24em] text-muted-foreground">
+                    {partnerTypeLabels[group.type]}
                   </h2>
                 </div>
-                <a
-                  href={partner.website}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-primary transition-colors hover:text-accent"
-                >
-                  Voir le site partenaire
-                  <ExternalLink className="h-4 w-4" />
-                </a>
+
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                  {group.partners.map((partner) => (
+                    <Card
+                      key={partner.id}
+                      className="group overflow-hidden rounded-[2rem] transition-all hover:-translate-y-1 hover:shadow-card"
+                    >
+                      <CardHeader>
+                        <div className="flex h-28 items-center justify-center rounded-2xl bg-papier-deep p-6">
+                          <PartnerLogo partner={partner} />
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-5">
+                        <div>
+                          <Badge variant="secondary">
+                            {partnerTypeLabels[partner.type]}
+                          </Badge>
+                          <h3 className="mt-4 font-display text-2xl font-bold text-encre">
+                            {partner.name}
+                          </h3>
+                          {partner.description ? (
+                            <p className="mt-3 text-sm leading-6 text-muted-foreground">
+                              {partner.description}
+                            </p>
+                          ) : null}
+                        </div>
+
+                        {partner.websiteUrl ? (
+                          <a
+                            href={partner.websiteUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-2 text-sm font-semibold text-primary transition-colors hover:text-accent"
+                          >
+                            Voir le site partenaire
+                            <ExternalLink className="h-4 w-4" />
+                          </a>
+                        ) : (
+                          <p className="text-sm font-semibold text-muted-foreground">
+                            Site partenaire à venir
+                          </p>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            ))
+          ) : (
+            <Card className="rounded-[2rem] border-dashed">
+              <CardContent className="py-12 text-center">
+                <h2 className="font-display text-2xl font-bold text-encre">
+                  Aucun partenaire disponible pour le moment.
+                </h2>
+                <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-muted-foreground">
+                  Les partenaires seront affichés ici dès leur ajout dans
+                  l&apos;espace d&apos;administration.
+                </p>
               </CardContent>
             </Card>
-          ))}
+          )}
         </div>
       </section>
 

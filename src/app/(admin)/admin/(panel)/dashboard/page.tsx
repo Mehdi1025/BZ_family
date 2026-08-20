@@ -8,6 +8,7 @@ import {
   ClipboardList,
   Heart,
   ImageIcon,
+  Mail,
   Newspaper,
   Users,
 } from "lucide-react";
@@ -24,6 +25,8 @@ export default async function AdminDashboardPage() {
     articleCount: 0,
     actionCount: 0,
     mediaCount: 0,
+    contactMessages: 0,
+    unreadMessages: 0,
   };
 
   try {
@@ -35,6 +38,8 @@ export default async function AdminDashboardPage() {
       articles,
       actions,
       media,
+      contactMessages,
+      unreadMessages,
     ] = await Promise.all([
       prisma.donation.aggregate({
         where: { status: "COMPLETED" },
@@ -46,6 +51,8 @@ export default async function AdminDashboardPage() {
       prisma.article.count(),
       prisma.action.count({ where: { isActive: true } }),
       prisma.galleryMedia.count(),
+      prisma.contactMessage.count(),
+      prisma.contactMessage.count({ where: { status: "NEW" } }),
     ]);
 
     stats = {
@@ -56,6 +63,8 @@ export default async function AdminDashboardPage() {
       articleCount: articles,
       actionCount: actions,
       mediaCount: media,
+      contactMessages,
+      unreadMessages,
     };
   } catch {
     // Database unavailable: keep zero state.
@@ -104,6 +113,13 @@ export default async function AdminDashboardPage() {
       icon: ImageIcon,
       color: "text-primary",
     },
+    {
+      title: "Messages contact",
+      value: stats.unreadMessages.toString(),
+      hint: `${stats.contactMessages} messages enregistrés`,
+      icon: Mail,
+      color: "text-primary",
+    },
   ];
 
   return (
@@ -144,8 +160,9 @@ export default async function AdminDashboardPage() {
           </CardHeader>
           <CardContent className="space-y-3 text-sm text-muted-foreground">
             <p>1. Vérifier les candidatures bénévoles en attente.</p>
-            <p>2. Mettre à jour les actions mises en avant sur le site public.</p>
-            <p>3. Contrôler les dons et la cohérence des contenus publiés.</p>
+            <p>2. Lire les nouveaux messages envoyés depuis la page contact.</p>
+            <p>3. Mettre à jour les actions mises en avant sur le site public.</p>
+            <p>4. Contrôler les dons et la cohérence des contenus publiés.</p>
           </CardContent>
         </Card>
 
@@ -168,6 +185,12 @@ export default async function AdminDashboardPage() {
               href="/admin/galerie"
             >
               Mettre à jour la galerie
+            </Link>
+            <Link
+              className="block text-primary hover:underline"
+              href="/admin/contact"
+            >
+              Lire les messages contact
             </Link>
           </CardContent>
         </Card>
