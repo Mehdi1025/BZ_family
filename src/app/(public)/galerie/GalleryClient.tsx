@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MediaImage } from "@/components/shared/MediaImage";
@@ -23,12 +23,45 @@ export function GalleryClient({ items }: GalleryClientProps) {
     [items]
   );
   const [activeFilter, setActiveFilter] = useState<string>("Tout");
-  const [selected, setSelected] = useState<GalleryItem | null>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const visibleItems = useMemo(() => {
     if (activeFilter === "Tout") return items;
     return items.filter((item) => item.category === activeFilter);
   }, [activeFilter, items]);
+
+  const selected =
+    selectedIndex !== null ? visibleItems[selectedIndex] ?? null : null;
+
+  useEffect(() => {
+    if (selectedIndex === null || !visibleItems.length) return;
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setSelectedIndex(null);
+        return;
+      }
+
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        setSelectedIndex((current) => {
+          if (current === null) return 0;
+          return (current + 1) % visibleItems.length;
+        });
+      }
+
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        setSelectedIndex((current) => {
+          if (current === null) return 0;
+          return (current - 1 + visibleItems.length) % visibleItems.length;
+        });
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [selectedIndex, visibleItems.length]);
 
   return (
     <>
@@ -37,7 +70,10 @@ export function GalleryClient({ items }: GalleryClientProps) {
           <button
             key={filter}
             type="button"
-            onClick={() => setActiveFilter(filter)}
+            onClick={() => {
+              setActiveFilter(filter);
+              setSelectedIndex(null);
+            }}
             className={cn(
               "rounded-full border px-5 py-2 text-sm font-semibold transition-all",
               activeFilter === filter
@@ -60,7 +96,7 @@ export function GalleryClient({ items }: GalleryClientProps) {
             <button
               key={item.id}
               type="button"
-              onClick={() => setSelected(item)}
+              onClick={() => setSelectedIndex(index)}
               className={cn(
                 "group overflow-hidden rounded-[1.75rem] border border-line bg-white text-left shadow-soft transition-all hover:-translate-y-1 hover:shadow-card",
                 index % 5 === 0 && "lg:row-span-2"
@@ -93,7 +129,7 @@ export function GalleryClient({ items }: GalleryClientProps) {
           className="fixed inset-0 z-[80] flex items-center justify-center bg-encre/90 p-4 backdrop-blur-sm"
           role="dialog"
           aria-modal="true"
-          onClick={() => setSelected(null)}
+          onClick={() => setSelectedIndex(null)}
         >
           <div
             className="relative w-full max-w-5xl overflow-hidden rounded-[2rem] bg-white shadow-2xl"
@@ -104,11 +140,43 @@ export function GalleryClient({ items }: GalleryClientProps) {
               variant="secondary"
               size="icon"
               className="absolute right-4 top-4 z-10 rounded-full"
-              onClick={() => setSelected(null)}
+              onClick={() => setSelectedIndex(null)}
               aria-label="Fermer l'image"
             >
               <X />
             </Button>
+            {visibleItems.length > 1 && (
+              <>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full px-4"
+                  onClick={() =>
+                    setSelectedIndex((current) => {
+                      if (current === null) return 0;
+                      return (current - 1 + visibleItems.length) % visibleItems.length;
+                    })
+                  }
+                  aria-label="Image précédente"
+                >
+                  ←
+                </Button>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="absolute right-20 top-1/2 z-10 -translate-y-1/2 rounded-full px-4"
+                  onClick={() =>
+                    setSelectedIndex((current) => {
+                      if (current === null) return 0;
+                      return (current + 1) % visibleItems.length;
+                    })
+                  }
+                  aria-label="Image suivante"
+                >
+                  →
+                </Button>
+              </>
+            )}
             <MediaImage
               src={selected.src}
               alt={selected.title}
@@ -122,6 +190,9 @@ export function GalleryClient({ items }: GalleryClientProps) {
               <h2 className="mt-2 font-display text-2xl font-bold text-encre">
                 {selected.title}
               </h2>
+              <p className="mt-3 text-sm text-muted-foreground">
+                Navigation clavier : flèches gauche/droite pour parcourir, Échap pour fermer.
+              </p>
             </div>
           </div>
         </div>

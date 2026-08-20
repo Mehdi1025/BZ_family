@@ -9,6 +9,48 @@ import prisma from "@/lib/prisma";
 import { requireAdminSession } from "@/lib/admin";
 import { formatDate, slugify } from "@/lib/utils";
 
+const demoActions = [
+  {
+    title: "Aide alimentaire",
+    slug: "aide-alimentaire",
+    category: "Solidarité",
+    summary:
+      "Des paniers, des repas et une présence humaine pour soutenir les familles dans les périodes difficiles.",
+    imageUrl: "/images/actions/alimentaire.jpg",
+    content: [
+      "L'aide alimentaire est l'une des actions historiques de BZ Family. Elle répond à une urgence simple : permettre à des familles du quartier de traverser une période compliquée sans perdre leur dignité.",
+      "Les bénévoles organisent les collectes, trient les produits, préparent les paniers et assurent les distributions dans un cadre bienveillant. L'objectif est d'apporter une aide concrète, mais aussi d'identifier les autres besoins : isolement, démarches, soutien scolaire ou accompagnement social.",
+      "Cette action repose sur la confiance entre habitants, partenaires locaux et bénévoles. Chaque don est utilisé pour renforcer la capacité de l'association à agir vite et au plus près du terrain.",
+    ].join("\n\n"),
+  },
+  {
+    title: "Accompagnement scolaire",
+    slug: "accompagnement-scolaire",
+    category: "Éducation",
+    summary:
+      "Un soutien régulier pour aider les enfants à reprendre confiance et progresser à leur rythme.",
+    imageUrl: "/images/actions/scolaire.jpg",
+    content: [
+      "L'accompagnement scolaire de BZ Family est pensé comme un espace stable, rassurant et accessible. Les enfants y trouvent un cadre pour faire leurs devoirs, poser leurs questions et consolider les bases vues en classe.",
+      "Les séances sont encadrées par des bénévoles formés, avec une attention portée au rythme de chaque enfant. Le but n'est pas seulement de terminer un exercice, mais de redonner confiance et de créer des habitudes de travail durables.",
+      "Les familles sont également associées à la démarche. L'association reste disponible pour échanger, orienter et construire un accompagnement cohérent autour de l'enfant.",
+    ].join("\n\n"),
+  },
+  {
+    title: "Lien social",
+    slug: "lien-social",
+    category: "Quartier",
+    summary:
+      "Des fêtes, ateliers et sorties pour casser l'isolement et renforcer la vie de quartier.",
+    imageUrl: "/images/actions/social.jpg",
+    content: [
+      "Le lien social est au cœur du projet de BZ Family. Les temps collectifs permettent aux habitants de se rencontrer autrement, de sortir de l'isolement et de retrouver une place active dans la vie du quartier.",
+      "Ateliers cuisine, fêtes de quartier, sorties familiales et rencontres bénévoles sont organisés tout au long de l'année. Ces rendez-vous simples créent une dynamique collective qui rend les autres actions plus fortes.",
+      "Chaque événement est pensé comme une porte d'entrée : venir une première fois, rencontrer l'équipe, proposer une idée, puis peut-être devenir bénévole à son tour.",
+    ].join("\n\n"),
+  },
+];
+
 export default async function AdminActionsPage() {
   await requireAdminSession();
 
@@ -112,6 +154,35 @@ export default async function AdminActionsPage() {
     }
   }
 
+  async function importDemoActions() {
+    "use server";
+    await requireAdminSession();
+
+    for (const action of demoActions) {
+      await prisma.action.upsert({
+        where: { slug: action.slug },
+        update: {
+          title: action.title,
+          summary: action.summary,
+          content: action.content,
+          category: action.category,
+          imageUrl: action.imageUrl,
+          isActive: true,
+        },
+        create: {
+          ...action,
+          isActive: true,
+        },
+      });
+    }
+
+    revalidatePath("/admin/actions");
+    revalidatePath("/nos-actions");
+    for (const action of demoActions) {
+      revalidatePath(`/nos-actions/${action.slug}`);
+    }
+  }
+
   let actions: Awaited<ReturnType<typeof prisma.action.findMany>> = [];
   let stats = { total: 0, active: 0 };
 
@@ -160,7 +231,14 @@ export default async function AdminActionsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Ajouter une action</CardTitle>
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <CardTitle>Ajouter une action</CardTitle>
+            <form action={importDemoActions}>
+              <Button type="submit" variant="outline">
+                Importer les 3 actions démo
+              </Button>
+            </form>
+          </div>
         </CardHeader>
         <CardContent>
           <form action={createAction} className="grid gap-4">
@@ -194,8 +272,17 @@ export default async function AdminActionsPage() {
       <div className="space-y-4">
         {actions.length === 0 ? (
           <Card>
-            <CardContent className="py-12 text-center text-muted-foreground">
-              Aucune action enregistrée pour le moment.
+            <CardContent className="py-12 text-center">
+              <p className="text-muted-foreground">
+                Aucune action enregistrée pour le moment.
+              </p>
+              <div className="mt-4 flex justify-center">
+                <form action={importDemoActions}>
+                  <Button type="submit" variant="outline">
+                    Charger les actions démo
+                  </Button>
+                </form>
+              </div>
             </CardContent>
           </Card>
         ) : (

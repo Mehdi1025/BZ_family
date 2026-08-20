@@ -1,5 +1,8 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { ArrowRight, ShieldCheck } from "lucide-react";
 import { SectionIntro } from "@/components/shared/FadeUp";
+import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -39,6 +42,21 @@ const sections = [
   },
 ];
 
+const dataExamples = [
+  {
+    type: "Formulaires de contact",
+    usage: "Répondre aux messages et assurer le suivi des demandes.",
+  },
+  {
+    type: "Demandes de bénévolat",
+    usage: "Organiser les prises de contact et les disponibilités des bénévoles.",
+  },
+  {
+    type: "Dons en ligne",
+    usage: "Traiter les paiements et conserver les informations nécessaires au suivi administratif.",
+  },
+];
+
 export default function PrivacyPolicyPage() {
   return (
     <>
@@ -56,10 +74,48 @@ export default function PrivacyPolicyPage() {
 
       <section className="section-padding bg-white">
         <div className="container-bz max-w-4xl">
-          <p className="mb-10 rounded-2xl bg-papier p-6 text-sm leading-relaxed text-muted-foreground">
-            Dernière mise à jour : 12 août 2026. Cette politique pourra être mise
-            à jour si les outils ou les traitements de l&apos;association évoluent.
-          </p>
+          <div className="mb-10 rounded-[2rem] border border-line bg-papier p-6 shadow-soft">
+            <div className="flex items-start gap-4">
+              <div className="rounded-2xl bg-primary/10 p-3 text-primary">
+                <ShieldCheck className="h-6 w-6" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">
+                  Repère RGPD
+                </p>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                  Dernière mise à jour : 20 août 2026. Cette politique pourra être
+                  actualisée si les formulaires, les outils ou les traitements de
+                  données de l&apos;association évoluent.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mb-10 overflow-hidden rounded-[2rem] border border-line bg-white shadow-soft">
+            <div className="border-b border-line bg-encre px-6 py-5 text-white">
+              <h2 className="font-display text-2xl font-bold">
+                Données concernées et usages principaux
+              </h2>
+              <p className="mt-2 text-sm text-white/70">
+                Cette synthèse permet de comprendre rapidement ce qui peut être
+                collecté et dans quel but.
+              </p>
+            </div>
+            <div className="divide-y divide-line">
+              {dataExamples.map((item) => (
+                <div
+                  key={item.type}
+                  className="grid gap-3 px-6 py-5 md:grid-cols-[220px_1fr] md:gap-6"
+                >
+                  <p className="text-sm font-semibold text-encre">{item.type}</p>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    {item.usage}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
 
           <div className="space-y-6">
             {sections.map((section) => (
@@ -72,6 +128,24 @@ export default function PrivacyPolicyPage() {
                 </p>
               </article>
             ))}
+          </div>
+
+          <div className="mt-10 rounded-[2rem] bg-encre p-8 text-white shadow-card">
+            <h2 className="font-display text-3xl font-bold">
+              Une question sur vos données ?
+            </h2>
+            <p className="mt-4 max-w-2xl leading-relaxed text-white/75">
+              Si vous souhaitez exercer un droit, signaler une erreur ou demander
+              une précision, BZ Family peut être contactée directement via la page
+              dédiée.
+            </p>
+            <div className="mt-6">
+              <Button variant="accent" size="lg" asChild>
+                <Link href="/contact">
+                  Contacter l&apos;association <ArrowRight aria-hidden="true" />
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
