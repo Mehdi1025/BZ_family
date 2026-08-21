@@ -115,6 +115,42 @@ export async function sendContactNotificationEmail({
   });
 }
 
+export async function sendContactReplyEmail({
+  to,
+  name,
+  originalSubject,
+  replySubject,
+  replyContent,
+}: {
+  to: string;
+  name: string;
+  originalSubject: string;
+  replySubject: string;
+  replyContent: string;
+}) {
+  if (!process.env.RESEND_FROM_EMAIL) return false;
+
+  const resend = getResend();
+  if (!resend) return false;
+
+  await resend.emails.send({
+    from: FROM_EMAIL,
+    to,
+    replyTo: FROM_EMAIL,
+    subject: replySubject,
+    html: `
+      <h1>Bonjour ${escapeHtml(name)},</h1>
+      <p>Nous revenons vers vous concernant votre message : <strong>${escapeHtml(
+        originalSubject
+      )}</strong>.</p>
+      <p>${escapeHtml(replyContent).replaceAll("\n", "<br/>")}</p>
+      <p>Bien cordialement,<br/>L'équipe BZ Family</p>
+    `,
+  });
+
+  return true;
+}
+
 export async function sendDonationThankYouEmail({
   to,
   donorName,

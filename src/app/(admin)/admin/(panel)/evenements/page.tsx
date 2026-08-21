@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import prisma from "@/lib/prisma";
 import { requireAdminSession } from "@/lib/admin";
 import { formatDate, slugify } from "@/lib/utils";
@@ -267,9 +268,11 @@ export default async function AdminEventsPage() {
                 required
               />
             </div>
-            <Input
+            <ImageUploadField
               name="imageUrl"
+              label="Image de l'événement"
               placeholder="URL ou chemin de l'image, ex : /images/events/cuisine.jpg"
+              helper="Vous pouvez coller une URL ou importer une image depuis votre PC."
             />
             <div>
               <Button type="submit">Enregistrer l&apos;événement</Button>
@@ -455,10 +458,12 @@ export default async function AdminEventsPage() {
                           required
                         />
                       </div>
-                      <Input
+                      <ImageUploadField
                         name="imageUrl"
+                        label="Image de l'événement"
                         defaultValue={event.imageUrl ?? ""}
                         placeholder="URL ou chemin de l'image"
+                        helper="L'image importée remplacera automatiquement le chemin actuel."
                       />
                       <div>
                         <Button type="submit" size="sm">

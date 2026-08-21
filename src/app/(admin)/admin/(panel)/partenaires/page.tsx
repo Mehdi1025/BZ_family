@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { requireAdminSession } from "@/lib/admin";
 import prisma from "@/lib/prisma";
 
@@ -203,9 +204,11 @@ export default async function AdminPartnersPage() {
           <form action={createPartner} className="grid gap-4">
             <div className="grid gap-4 md:grid-cols-2">
               <Input name="name" placeholder="Nom du partenaire" required />
-              <Input
+              <ImageUploadField
                 name="logoUrl"
+                label="Logo du partenaire"
                 placeholder="/images/partners/logo.png"
+                helper="Vous pouvez coller un chemin existant ou importer un logo depuis votre PC."
               />
             </div>
             <div className="grid gap-4 md:grid-cols-2">
@@ -304,10 +307,12 @@ export default async function AdminPartnersPage() {
                         placeholder="Nom du partenaire"
                         required
                       />
-                      <Input
+                      <ImageUploadField
                         name="logoUrl"
+                        label="Logo du partenaire"
                         defaultValue={partner.logoUrl ?? ""}
                         placeholder="/images/partners/logo.png"
+                        helper="Le logo importé remplacera automatiquement le chemin actuel."
                       />
                     </div>
                     <div className="grid gap-4 md:grid-cols-2">

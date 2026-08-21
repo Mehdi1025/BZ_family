@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import prisma from "@/lib/prisma";
 import { requireAdminSession } from "@/lib/admin";
 import { formatDate, slugify } from "@/lib/utils";
@@ -221,7 +222,12 @@ export default async function AdminNewsPage() {
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               <Input name="category" placeholder="Catégorie" required />
-              <Input name="imageUrl" placeholder="URL ou chemin de l'image" />
+              <ImageUploadField
+                name="imageUrl"
+                label="Image de l'actualité"
+                placeholder="URL ou chemin de l'image"
+                helper="Vous pouvez coller une URL ou importer une image depuis votre PC."
+              />
             </div>
             <Textarea
               name="excerpt"
@@ -323,10 +329,12 @@ export default async function AdminNewsPage() {
                         placeholder="Catégorie"
                         required
                       />
-                      <Input
+                      <ImageUploadField
                         name="imageUrl"
+                        label="Image de l'actualité"
                         defaultValue={article.imageUrl ?? ""}
                         placeholder="URL ou chemin de l'image"
+                        helper="L'image importée remplacera automatiquement le chemin actuel."
                       />
                     </div>
                     <Textarea

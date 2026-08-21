@@ -126,14 +126,17 @@ model VolunteerApplication {
 }
 
 model ContactMessage {
-  id        String   @id @default(cuid())
-  name      String
-  email     String
-  subject   String
-  message   String   @db.Text
-  status    String   @default("NEW")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String    @id @default(cuid())
+  name         String
+  email        String
+  subject      String
+  message      String    @db.Text
+  status       String    @default("NEW")
+  replySubject String?
+  replyContent String?   @db.Text
+  repliedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 }
 
 model Donation {
